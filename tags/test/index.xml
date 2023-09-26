@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on 叶藏吟歌</title>
-    <link>https://yezhangyinge.github.io/posts/</link>
-    <description>Recent content in Posts on 叶藏吟歌</description>
+    <title>test on 叶藏吟歌</title>
+    <link>https://yezhangyinge.github.io/tags/test/</link>
+    <description>Recent content in test on 叶藏吟歌</description>
     <image>
       <url>https://yezhangyinge.github.io/papermod-cover.png</url>
       <link>https://yezhangyinge.github.io/papermod-cover.png</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 26 Sep 2023 15:12:37 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 26 Sep 2023 15:12:37 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/tags/test/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>First</title>
       <link>https://yezhangyinge.github.io/posts/first/</link>
@@ -27,15 +27,6 @@
       
       <guid>https://yezhangyinge.github.io/posts/steps/</guid>
       <description>Tutorial: Post an article Create a markdown file hugo new posts/file_name.md Preview Commit hugo cd public git add . git commit -m &amp;ldquo;update&amp;rdquo; git push origin master hugo cd public git add . git commit -m &amp;ldquo;update&amp;rdquo; git push origin master</description>
-    </item>
-    
-    <item>
-      <title>Test</title>
-      <link>https://yezhangyinge.github.io/posts/test/</link>
-      <pubDate>Tue, 26 Sep 2023 13:57:16 +0800</pubDate>
-      
-      <guid>https://yezhangyinge.github.io/posts/test/</guid>
-      <description>Hello World test</description>
     </item>
     
   </channel>
