@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Yezhangyinge&#39;s blog</title>
+    <link>https://yezhangyinge.github.io/</link>
+    <description>Recent content on Yezhangyinge&#39;s blog</description>
+    <image>
+      <url>https://yezhangyinge.github.io/papermod-cover.png</url>
+      <link>https://yezhangyinge.github.io/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 26 Sep 2023 14:01:51 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Steps</title>
+      <link>https://yezhangyinge.github.io/posts/steps/</link>
+      <pubDate>Tue, 26 Sep 2023 14:01:51 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/steps/</guid>
+      <description>hugo new posts/file_name.md hugo cd public git add . git commit -m &amp;ldquo;update&amp;rdquo; git push origin master hugo cd public git add . git commit -m &amp;ldquo;update&amp;rdquo; git push origin master</description>
+    </item>
+    
+    <item>
+      <title>Test</title>
+      <link>https://yezhangyinge.github.io/posts/test/</link>
+      <pubDate>Tue, 26 Sep 2023 13:57:16 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/test/</guid>
+      <description>Hello World test</description>
+    </item>
+    
+    
+    
+    
+    
+  </channel>
+</rss>
