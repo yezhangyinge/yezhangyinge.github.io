@@ -12,18 +12,12 @@
     <language>en</language>
     <lastBuildDate>Tue, 26 Sep 2023 14:01:51 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Tutorial: Post an article</title>
+      <title>Post an article</title>
       <link>https://yezhangyinge.github.io/posts/20230926_tutorial_post_a_article/</link>
       <pubDate>Tue, 26 Sep 2023 14:01:51 +0800</pubDate>
       
       <guid>https://yezhangyinge.github.io/posts/20230926_tutorial_post_a_article/</guid>
-      <description>Tutorial: Post an article Create a markdown file hugo new posts/file_name.md 将写好的.md文件内容放置在file_name.md文件内。
-之后，需要添加文件的tags和categorise
-tags：一般是琐碎的，精准的 categories：一般是抽象的，泛指的 最后将draft设置为false，即可。
-Preview the file 写好文章后第一步不应该commit，而是在本地查看是否符合预期。
-hugo server 用上面的指令会先生成本地预览文件，在 http://localhost:1313/ 显示。
-Commit 要提交article到网页，首先需要进入到 D:/hugo-papermod 的文件夹下 然后按照下面的指令操作即可。
-hugo cd public git add . git commit -m &amp;quot;update&amp;quot; git push origin master Change favicon 首先需要生成favicon文件，到这个网站可以获取: https://www.logosc.cn/logo/favicon 然后将favicon文件全部放置在 D:/hugo-papermod/static 文件夹下面。然后转到 D:/hugo-papermod/config.yml 文件夹里面，修改为对应生成的favicon的文件即可 </description>
+      <description>This is a tutorial of posting an article for myself.</description>
     </item>
     
   </channel>
