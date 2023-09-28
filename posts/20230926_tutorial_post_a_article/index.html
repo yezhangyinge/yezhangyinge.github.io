@@ -231,9 +231,8 @@
 
   <div class="post-content"><h1 id="tutorial-post-an-article">Tutorial: Post an article<a hidden class="anchor" aria-hidden="true" href="#tutorial-post-an-article">#</a></h1>
 <h2 id="create-a-markdown-file">Create a markdown file<a hidden class="anchor" aria-hidden="true" href="#create-a-markdown-file">#</a></h2>
-<pre><code>hugo new posts/file_name.md
-</code></pre>
-<p>将写好的.md文件内容放置在file_name.md文件内。<br>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo new posts/file_name.md
+</span></span></code></pre></div><p>将写好的.md文件内容放置在file_name.md文件内。<br>
 之后，需要添加文件的tags, categorise 和 summary</p>
 <ol>
 <li>tags：一般是琐碎的，精准的</li>
@@ -243,19 +242,17 @@
 <p>最后将draft设置为false，即可。</p>
 <h2 id="preview-the-file">Preview the file<a hidden class="anchor" aria-hidden="true" href="#preview-the-file">#</a></h2>
 <p>写好文章后第一步不应该commit，而是在本地查看是否符合预期。</p>
-<pre><code>hugo server 
-</code></pre>
-<p>用上面的指令会先生成本地预览文件，在 http://localhost:1313/ 显示。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo server 
+</span></span></code></pre></div><p>用上面的指令会先生成本地预览文件，在 http://localhost:1313/ 显示。</p>
 <h2 id="commit">Commit<a hidden class="anchor" aria-hidden="true" href="#commit">#</a></h2>
 <p>要提交article到网页，首先需要进入到 D:/hugo-papermod 的文件夹下
 然后按照下面的指令操作即可。</p>
-<pre><code>hugo
-cd public
-git add .
-git commit -m &quot;update&quot;
-git push origin master
-</code></pre>
-<h2 id="change-favicon">Change favicon<a hidden class="anchor" aria-hidden="true" href="#change-favicon">#</a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> public
+</span></span><span class="line"><span class="cl">git add .
+</span></span><span class="line"><span class="cl">git commit -m <span class="s2">&#34;update&#34;</span>
+</span></span><span class="line"><span class="cl">git push origin master
+</span></span></code></pre></div><h2 id="change-favicon">Change favicon<a hidden class="anchor" aria-hidden="true" href="#change-favicon">#</a></h2>
 <p>首先需要生成favicon文件，到这个网站可以获取:
 <a href="https://www.logosc.cn/logo/favicon">https://www.logosc.cn/logo/favicon</a> <br>
 然后将favicon文件全部放置在 D:/hugo-papermod/static 文件夹下面。然后转到 D:/hugo-papermod/config.yml 文件夹里面，修改为对应生成的favicon的文件即可
