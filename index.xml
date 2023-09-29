@@ -10,7 +10,16 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 26 Sep 2023 14:01:51 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Sep 2023 14:01:51 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Traditional Single-Channel NS</title>
+      <link>https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/</link>
+      <pubDate>Thu, 28 Sep 2023 14:01:51 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/</guid>
+      <description>这篇文章主要是介绍一些传统的噪声抑制算法，比如谱减法，维纳滤波和MMSE。其中也包含了一些我个人对于传统算法的理解，还有一些对于传统与深度之间的联系的思考。</description>
+    </item>
+    
     <item>
       <title>Post an article</title>
       <link>https://yezhangyinge.github.io/posts/20230926_tutorial_post_a_article/</link>

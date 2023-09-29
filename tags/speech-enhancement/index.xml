@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on 叶藏吟歌</title>
-    <link>https://yezhangyinge.github.io/posts/</link>
-    <description>Recent content in Posts on 叶藏吟歌</description>
+    <title>speech enhancement on 叶藏吟歌</title>
+    <link>https://yezhangyinge.github.io/tags/speech-enhancement/</link>
+    <description>Recent content in speech enhancement on 叶藏吟歌</description>
     <image>
       <url>https://yezhangyinge.github.io/papermod-cover.png</url>
       <link>https://yezhangyinge.github.io/papermod-cover.png</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 28 Sep 2023 14:01:51 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Sep 2023 14:01:51 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/tags/speech-enhancement/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Traditional Single-Channel NS</title>
       <link>https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/</link>
@@ -18,15 +18,6 @@
       
       <guid>https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/</guid>
       <description>这篇文章主要是介绍一些传统的噪声抑制算法，比如谱减法，维纳滤波和MMSE。其中也包含了一些我个人对于传统算法的理解，还有一些对于传统与深度之间的联系的思考。</description>
-    </item>
-    
-    <item>
-      <title>Post an article</title>
-      <link>https://yezhangyinge.github.io/posts/20230926_tutorial_post_a_article/</link>
-      <pubDate>Tue, 26 Sep 2023 14:01:51 +0800</pubDate>
-      
-      <guid>https://yezhangyinge.github.io/posts/20230926_tutorial_post_a_article/</guid>
-      <description>This is a tutorial of posting an article for myself.</description>
     </item>
     
   </channel>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Traditional Single-Channel NS | 叶藏吟歌</title>
+<meta name="keywords" content="noise suppression, speech enhancement, traditional, MCRA-OMLSA" />
+<meta name="description" content="这篇文章主要是介绍一些传统的噪声抑制算法，比如谱减法，维纳滤波和MMSE。其中也包含了一些我个人对于传统算法的理解，还有一些对于传统与深度之间的联系的思考。">
+<meta name="author" content="yezhangyinge">
+<link rel="canonical" href="https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.6f53180e98967b6adc03b63821565ab6870a325f8c5e5b55742eb270345bcc56.css" integrity="sha256-b1MYDpiWe2rcA7Y4IVZatocKMl&#43;MXltVdC6ycDRbzFY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yezhangyinge.github.io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yezhangyinge.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yezhangyinge.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yezhangyinge.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yezhangyinge.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.119.0">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Traditional Single-Channel NS" />
+<meta property="og:description" content="这篇文章主要是介绍一些传统的噪声抑制算法，比如谱减法，维纳滤波和MMSE。其中也包含了一些我个人对于传统算法的理解，还有一些对于传统与深度之间的联系的思考。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/" /><meta property="og:image" content="https://yezhangyinge.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-28T14:01:51&#43;08:00" />
+<meta property="article:modified_time" content="2023-09-28T14:01:51&#43;08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yezhangyinge.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="Traditional Single-Channel NS"/>
+<meta name="twitter:description" content="这篇文章主要是介绍一些传统的噪声抑制算法，比如谱减法，维纳滤波和MMSE。其中也包含了一些我个人对于传统算法的理解，还有一些对于传统与深度之间的联系的思考。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://yezhangyinge.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Traditional Single-Channel NS",
+      "item": "https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Traditional Single-Channel NS",
+  "name": "Traditional Single-Channel NS",
+  "description": "这篇文章主要是介绍一些传统的噪声抑制算法，比如谱减法，维纳滤波和MMSE。其中也包含了一些我个人对于传统算法的理解，还有一些对于传统与深度之间的联系的思考。",
+  "keywords": [
+    "noise suppression", "speech enhancement", "traditional", "MCRA-OMLSA"
+  ],
+  "articleBody": "首先声明，这篇文章包含不少公式。如果看的中途感到劳累了，请休息会，点杯coffee。当然，人生苦短，大可以放弃阅读传统算法，投入深度学习的怀抱吧。\nProblem Formulation 日常通话过程中，到达麦克风的信号除了语音信号 $x(t)$ ，往往还有噪声信号 $n(t)$ ，因此麦克风输出的信号 $y(t)$ 就包含了两个部分，语音和噪声（这里不考虑混响的情况，而且认为噪声是加性噪声）： $$ y(t) = x(t)+n(t) \\tag{1} $$ 噪声抑制要做的就是从麦克风信号中抑制噪声信号 $n(t)$ ，保留干净语音信号 $x(t)$。一般而言我们会使用 STFT 将信号搬移到时频域来进行噪声的抑制： $$ Y(t,f) = X(t,f)+N(t,f)\\tag{2} $$ 其中 $t$ 代表帧，$f$ 代表 frequency bin。\nPrior \u0026 Posterior SNR 传统噪声抑制最为关键的两个要素是：先验信噪比 $\\xi(t,f)$ 和后验信噪比 $\\gamma(t,f)$。计算方式如下： $$ \\xi(t,f) = \\frac{|X(t,f)|^2}{|N(t,f)|^2} \\tag{3} $$\n$$ \\gamma(t,f) = \\frac{|Y(t,f)|^2}{|N(t,f)|^2} \\tag{4} $$\n这两个信噪比可以将大部分传统的算法联系起来，形成一个统一的框架，所以在这里先为介绍。\n先验信噪比描述了干净语音功率和噪声功率之间的关系。后验信噪比则描述了带噪语音功率和噪声功率之间的关系。如果可以精确地估计这两个信噪比，就可以很好地对噪声进行抑制，所以传统算法基本围绕这两个信噪比的估计展开。\n值得注意的是，公式 $(3),(4)$ 都需要计算噪声的功率 $|N(t,f)|^2$，处理这个问题的方法是：噪声估计。\n另一个注意点，公式 $(3)$ 要求计算语音信号的功率 $|X(t,f)|^2$ （但一般不直接求取），处理这个问题的方法是：判决引导法 (DDA)。\nNoise Estimation 首先处理噪声估计的问题。传统算法下噪声估计有三种重要思想：\n噪声能量比较平稳，而且带语音的片段能量高于纯噪声的片段，所以可以通过跟踪功率最小值来获取噪声估计。 噪声功率估计想要稳定，通常要对功率谱进行平滑处理，也就是进行递归平均。 结合语音存在和不存在的概率，调节噪声估计在语音存在/不存在时各自的权重。 这三种思想各自都有对应的算法，在这里只介绍集合了三种思想的最小值控制的递归平均 (minima controlled recursive averaging, MCRA) 算法。\nMCRA 针对3，MCRA算法将噪声估计划分为了两类：\n$$ \\begin{align} speech\\ absent:\u0026 |N(t+1,f)|^2_{sa} = \\alpha |N(t,f)|^2 + (1-\\alpha)|Y(t,f)|^2 \\tag{5} \\\\ speech\\ present:\u0026 |N(t+1,f)|^2_{sp} = |N(t,f)|^2\\tag{6} \\end{align} $$\n第一个式子代表语音不存在的时候，此时需要对噪声进行重新的估计，同时针对2使用了递归平均来稳定噪声的估计。\n第二个式子代表语音存在的时候，因为此时语音存在，所以噪声延续上一帧的估计。\n针对3，设定一个语音存在概率 $p(t,f)$ 作为权重来将噪声估计的式子写为一个： $$ |N(t+1,f)|^2 = p(t,f)\\times |N(t+1,f)|^2_{sp} + (1-p(t,f))\\times |N(t,f)|^2_{sa} \\tag{7} $$ 此时需要对语音存在概率 $p(t,f)$ 进行估计， $$ p(t+1,f) = \\alpha_p p(t,f)+(1-\\alpha_p)\\delta [S_r(t,f)-\\Delta] \\tag{8} $$ 上式使用了针对2的递归平均来计算，以稳定对于语音存在概率的估计，其中 $\\delta[\\cdot]$ 代表指示函数。$S_r(t,f)$ 的计算公式如下： $$ S_r(t,f) = \\frac{\\sum_{i=-n}^{n}{w(i)|Y(t,f+i)|^2}}{min [\\sum_{i=-n}^{n}{w(i)|Y(t-1,f+i)|^2},\\sum_{i=-n}^{n}{w(i)|Y(t,f+i)|^2}]}\\tag{9} $$ 上式分号的上半部分 $\\sum_{i=-n}^{n}{w(i)|Y(t,k+i)|^2}$ 代表对邻近频率点进行功率的平均，下半部分 $min[\\cdot]$ 则代表不断获取局部的最小功率。整个式子的含义在于求得当前帧的功率与局部帧的最小功率的比值 $S_r(t,f)$ ，如果这个比值大于 $\\Delta$ ，那么就可以认为当前帧的能量是比较高的，需要用来更新对于语音存在概率的估计。这种想法来源于针对1的最小值功率的跟踪。\nSummary 整个MCRA算法是比较简单的，思路在于先通过 $(8),(9)$ 求取语音存在概率 $p(t,f)$ ，然后就可以根据 $(7)$ 来进行噪声的估计了。\nPrior SNR Estimation 通过对噪声功率的估计获取了 $|N(t,f)|^2$ ，同时带噪语音的功率 $|Y(t,f)|^2$ 也可以直接获取。因此根据 $(4)$ 可以得到后验信噪比 $\\gamma(t,f)$ 的估计。但先验信噪比应该如何估计呢？\n不妨大胆一点，我们假设噪声和语音是不相关的，可以得到： $$ \\begin{align} |Y(t,f)|^2 \u0026= Y(t,f) \\times Y^*(t,f) \\tag{10}\\\\ \u0026= [X(t,f)+N(t,f)] \\times [X(t,f)+N(t,f)]^{\\star} \\tag{11}\\\\ \u0026= |X(t,f)|^2 +|N(t,f)|^2\\tag{12} \\end{align} $$ 这样，我们就可以得到干净语音的功率估计为： $$ |X(t,f)|^2 = |Y(t,f)|^2 - |N(t,f)|^2 \\tag{13} $$ 此时就可以通过 $(3)$ 来计算先验信噪比了。当然，我们还可以获得先验信噪比和后验信噪比的关系式： $$ \\xi(t,f) = \\frac{|Y(t,f)|^2-|N(t,f)|^2}{|N(t,f)|^2}= \\gamma(t,f)-1 \\tag{14} $$ 需要注意到，理论上分析有 $|Y(t,f)|^2 \\ge |N(t,f)|^2$ ，可是 $|N(t,f)|^2$ 是通过噪声估计得到的，存在大于 $|Y(t,f)|^2$ 的可能性，所以通过后验信噪比来估计先验信噪比还需要加入 $max[\\cdot]$ 函数来保证非负： $$ \\xi(t,f) =max[\\gamma(t,f)-1, 0] \\tag{15} $$\nDDA 但是，实际中一般会采取DDA来实现更加精确的估计： $$ \\xi(t,f) = \\alpha \\xi(t-1,f) + (1-\\alpha)max[\\gamma(t,f)-1,0] \\tag{16} $$ 注意到上式其实就是一个递归平均，第一项 $\\xi(t-1,f)$ 为前一帧估计的先验信噪比，第二项 $max[\\gamma(t,f)-1,0]$ 是当前帧估计的先验信噪比。\nSummary 对于先验信噪比的估计核心之一在于求得后验信噪比 $\\gamma(t,f)$ ，而后验信噪比本质上又和噪声估计息息相关。所以对于噪声的估计是传统里需要着重处理的问题。（但是，似乎在神经网络部分很少见到有人尝试对噪声进行估计了，可能因为估计难度比较高？）\nNoise Suppression 前面介绍了先验信噪比和后验信噪比的定义及其求法，但可能你还云里雾里不清楚为什么需要求这两个信噪比，而在这里我将通过几个经典的噪声抑制算法向你展示其美妙之处。\n1. Spectral Subtraction 顾名思义，谱减法就是从带噪语音功率谱减去噪声功率谱，得到干净语音的功率谱。那么会有下面的式子： $$ \\begin{align} |X(t,f)|^2 \u0026= |Y(t,f)|^2-|N(t,f)|^2 \\tag{17} \\\\ \u0026= [1-\\frac{1}{\\gamma(t,f)}]\\times |Y(t,f)|^2 \\tag{18} \\end{align} $$ 所以，只需要求得后验信噪比 $\\gamma(t,f)$ 就可以实现谱减法了。\n2. Wiener Filter 维纳滤波只做一件事：实现真实信号 $X(t,f)$ 与估计信号 $\\hat X(t,f)$ 的均方误差最小。而噪声抑制的方式是通过计算滤波器实现滤波： $$ \\hat X(t,f) = H(t,f)Y(t,f) \\tag{19} $$ 均方误差最小的优化式子为： $$ \\begin{align} min\\ J =\u0026 E {(X(t,f)-\\hat X(t,f))(X(t,f)-\\hat X(t,f))^* } \\tag{20}\\\\ =\u0026 |X(t,f)|^2+|H(t,f)|^2|Y(t,f)|^2 \\\\ \u0026-X(t,f)H^{\\star}(t,f)Y^{\\star}(t,f) - X^{\\star}(t,f)H(t,f)Y(t,f) \\tag{21} \\end{align} $$ 然后求梯度，找到最小值： $$ \\nabla J_{H(t,f)} = 2H(t,f)|Y(t,f)|^2 - X(t,f)Y^{\\star}(t,f)-X^{\\star}(t,f)Y(t,f)=0 \\tag{22} $$ 上式可以得到： $$ \\begin{align} H(t,f) \u0026= \\frac{X(t,f)Y^{\\star}(t,f)}{|Y(t,f)|^2} \\tag{23}\\\\ \u0026= \\frac{X(t,f)(X^{\\star}(t,f)+N^{\\star}(t,f))}{|X(t,f)|^2+|N(t,f)|^2}\\tag{24}\\\\ \u0026= \\frac{|X(t,f)|^2}{|X(t,f)|^2+|N(t,f)|^2}\\tag{25}\\\\ \u0026= \\frac{\\xi(t,f)}{1+\\xi(t,f)}\\tag{26} \\end{align} $$ 注意上式 $(23)\\rightarrow(24)$ 使用了噪声和语音不相关的特性来得到分号下边，$(24)\\rightarrow(25)$ 同样使用了噪声和语音不相关特性来使得 $X(t,f)N^{\\star}(t,f)=0$ 。那么整个维纳滤波就可以转化为下式： $$ \\begin{align} X(t,f) \u0026= H(t,f)Y(t,f)\\tag{27}\\\\ \u0026= \\frac{\\xi(t,f)}{1+\\xi(t,f)}Y(t,f)\\tag{28} \\end{align} $$ 所以，只需要求得先验信噪比 $\\xi(t,f)$ 就可以实现维纳滤波了。（另一个有意思的点是，维纳滤波是复数谱上的估计，而不仅仅是幅度谱。）\n3. Statistic-Based Model 这一类方法一律依赖贝叶斯准则： $$ P(X|Y) = \\frac{P(Y|X)P(X)}{P(Y)}\\tag{29} $$ 上式中 $P(X|Y)$ 称为后验， $P(Y|X)$ 称为似然， $P(X)$ 称为先验，$P(Y)$ 称为证据。当最大化后验概率的时候称之为 MAP ，最大化似然的时候称之为 MLE。这一类估计需要复杂的数学推理，在这里就不进行了。\n但是，同样地其噪声抑制的表达式仍旧可以写为（以下以 MLE 为例子）： $$ |X(t,f)| = [ \\frac{1}{2}+\\frac{1}{2}\\sqrt{\\frac{\\xi_(t,f)}{1+\\xi(t,f)}} ]|Y(t,f)|\\tag{30} $$ 可以看到，仍旧可以通过计算 $\\xi(t,f)$ 先验信噪比来实现噪声抑制。\nOMLSA 基于统计学方法的最为出名的，可能还得是 OMLSA 算法了，其结合了两种思想：log-MMSE 最优估计器和语音存在概率。其增益函数的表达式如下： $$ \\begin{align} speech\\ absent:\u0026G_{sa}(t,f) = G_{min}(t,f) \\tag{31}\\\\ speech\\ present:\u0026G_{sp}(t,f) = \\frac{\\xi(t,f)}{1+\\xi(t,f)}\\int_{v(t,f)}^{\\infty}\\frac{1}{2}\\frac{e^{-t}}{t}dt \\tag{32} \\end{align} $$ 其中 $v(t,f) = \\frac{\\xi(t,f)\\gamma(t,f)}{1+\\xi(t,f)}$。\n与 MCRA 算法一致的，两者都需要估计语音存在概率 $p(t,f)$，通过语音存在概率可以将整个增益式子写为： $$ G(t,f) = G_{sp}(t,f)^{p(t,f)}\\times G_{sa}(t,f)^{1-p(t,f)} \\tag{33} $$ 与 MCRA 算法不一致的是，两者估计语音存在概率 $p(t,f)$ 的方式不一样，OMLSA 采取的估计方式为： $$ p(t,f) = [1+\\frac{q(t,f)}{1-q(t,f)}\\times(1+\\xi(t,f))\\times e^{-v(t,f)}]^{-1} \\tag{34} $$ 其中 $q(t,f)$ 为语音缺失概率，也就是将语音存在概率通过 $(34)$ 转化为了求解语音缺失概率。语音缺失概率计算公式为： $$ q(t,f) = 1-p_{local}(t,f)\\times p_{global}(t,f)\\times p_{frame}(t,f) \\tag{35} $$ 将求解转化为了三个语音存在概率 $p_{local}(t,f), p_{global}(t,f), p_{frame}(t,f)$ 进行计算。（真是绕的不行= =，具体这三个概率的计算见论文）\nsummary OMLSA 的增益函数的计算方式其实就两个关键：logMMSE 最优估计器和语音存在概率。\n在计算的时候需要首先通过计算语音缺失概率 $q(t,f)$ ，然后得到语音存在概率 $p(t,f)$ ，接着通过 $(31),(32),(33)$ 来计算增益式子。\n值得注意的是增益式子同样是由先验信噪比 $\\xi(t,f)$ 和后验信噪比 $\\gamma(t,f)$ 构成的。\nMCRA-OMLSA 由 cohen 提出的 MCRA-OMLSA 是一个非常经典的噪声抑制算法。其将语音存在概率分别用于噪声估计和增益函数的求解，使得能够在非稳态噪声的情况下也取得不错的性能。算法很简单，其实就是结合了OMLSA和MCRA，而在前面已经对两个算法进行介绍了，所以这里只给出一个流程框图：\n上图忽略了一些计算的细节（尤其是语音缺失和语音存在概率的计算细节），但是大致上是按照这个流程走的。\nTraditional VS Deep-Learning Traditional 就目前学习到的传统算法而言，都是基于下面的式子的： $$ |X(t,f)| = G(t,f)|Y(t,f)| \\tag{36} $$ 总体而言就是求解一个增益函数 $G(t,f)$ 来对幅度谱进行增强。\n这样做存在的问题：\n无法对相位进行增强（大部分） 对于噪声估计的要求十分苛刻，因为先验信噪比和后验信噪比的估计都离不开噪声估计 这样做带来的优点：\n不同于神经网络，这样做只需要很少，或者几乎没有参数的存储要求 不同于神经网络，这样做运算量小了非常多 Deep-Learning 传统方法与深度学习的噪声抑制存在非常强的关联性。深度学习的噪声抑制式子为（下式仅考虑了幅度）： $$ |X(t,f)|=M(t,f)|Y(t,f)| \\tag{37} $$ 显然可以看到，深度学习中的掩膜 $M(t,f)$ (Mask) 实际上就是传统方法中的增益 $G(t,f)$ (Gain) 函数。\n而深度学习优势在于：\n可以将相位也考虑进网络的优化，使得掩膜变为复数掩膜，带来相比于传统算法更好的性能 不再需要使用复杂的算法来估计噪声，先验，后验信噪比 可以通过让网络来自行学习如何估计掩膜（也就是增益，但带来的就是对于训练数据的要求） 能够处理更加复杂的噪声情况 同时深度学习的缺点在于：\n运算量较大 参数量较大 Summary 总体而言，传统的噪声抑制算法存在比较多的数学和工程知识，而且需要不少假设来简化理论推导。但是带来的是低复杂度，还有不错的效果。当然，由于对噪声估计的依赖，个人认为在使用神经网络去除部分噪声之后，将传统算法作为postfilter可能会是一个不错的选择。因为在通过神经网络消除部分噪声之后，可以尽可能保证带语音的片段能量高于纯噪声的片段，来满足噪声估计的要求。\n在神经网络大行其道的如今，传统算法并不是不能发挥其作用。工程中，综合考虑运算复杂度和性能时，结合轻量化的神经网络和传统算法可能会是一个较好的选择。\n",
+  "wordCount" : "508",
+  "inLanguage": "en",
+  "datePublished": "2023-09-28T14:01:51+08:00",
+  "dateModified": "2023-09-28T14:01:51+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "yezhangyinge"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yezhangyinge.github.io/posts/20230000_traditional_noise_suppression/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "叶藏吟歌",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yezhangyinge.github.io/android-chrome-192x192.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yezhangyinge.github.io" accesskey="h" title="叶藏吟歌 (Alt + H)">叶藏吟歌</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yezhangyinge.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://yezhangyinge.github.io">Home</a>&nbsp;»&nbsp;<a href="https://yezhangyinge.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      Traditional Single-Channel NS
+    </h1>
+    <div class="post-meta"><span title='2023-09-28 14:01:51 +0800 CST'>September 28, 2023</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;yezhangyinge
+      
+    </div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#problem-formulation" aria-label="Problem Formulation">Problem Formulation</a></li>
+                    <li>
+                        <a href="#prior--posterior-snr" aria-label="Prior &amp;amp; Posterior SNR">Prior &amp; Posterior SNR</a></li>
+                    <li>
+                        <a href="#noise-estimation" aria-label="Noise Estimation">Noise Estimation</a><ul>
+                            
+                    <li>
+                        <a href="#mcra" aria-label="MCRA">MCRA</a></li>
+                    <li>
+                        <a href="#summary" aria-label="Summary">Summary</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#prior-snr-estimation" aria-label="Prior SNR Estimation">Prior SNR Estimation</a><ul>
+                            
+                    <li>
+                        <a href="#dda" aria-label="DDA">DDA</a></li>
+                    <li>
+                        <a href="#summary-1" aria-label="Summary">Summary</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#noise-suppression" aria-label="Noise Suppression">Noise Suppression</a><ul>
+                            
+                    <li>
+                        <a href="#1-spectral-subtraction" aria-label="1. Spectral Subtraction">1. Spectral Subtraction</a></li>
+                    <li>
+                        <a href="#2-wiener-filter" aria-label="2. Wiener Filter">2. Wiener Filter</a></li>
+                    <li>
+                        <a href="#3-statistic-based-model" aria-label="3. Statistic-Based Model">3. Statistic-Based Model</a><ul>
+                            
+                    <li>
+                        <a href="#omlsa" aria-label="OMLSA">OMLSA</a></li>
+                    <li>
+                        <a href="#summary-2" aria-label="summary">summary</a></li></ul>
+                    </li></ul>
+                    </li>
+                    <li>
+                        <a href="#mcra-omlsa" aria-label="MCRA-OMLSA">MCRA-OMLSA</a></li>
+                    <li>
+                        <a href="#traditional-vs-deep-learning" aria-label="Traditional VS Deep-Learning">Traditional VS Deep-Learning</a><ul>
+                            
+                    <li>
+                        <a href="#traditional" aria-label="Traditional">Traditional</a></li>
+                    <li>
+                        <a href="#deep-learning" aria-label="Deep-Learning">Deep-Learning</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#summary-3" aria-label="Summary">Summary</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><p>首先声明，这篇文章包含不少公式。如果看的中途感到劳累了，请休息会，点杯coffee。当然，人生苦短，大可以放弃阅读传统算法，投入深度学习的怀抱吧。</p>
+<hr>
+<h1 id="problem-formulation">Problem Formulation<a hidden class="anchor" aria-hidden="true" href="#problem-formulation">#</a></h1>
+<p>日常通话过程中，到达麦克风的信号除了语音信号 $x(t)$ ，往往还有噪声信号 $n(t)$ ，因此麦克风输出的信号 $y(t)$ 就包含了两个部分，语音和噪声（这里不考虑混响的情况，而且认为噪声是加性噪声）：
+$$
+y(t) = x(t)+n(t) \tag{1}
+$$
+<strong>噪声抑制要做的就是从麦克风信号中抑制噪声信号 $n(t)$ ，保留干净语音信号 $x(t)$</strong>。一般而言我们会使用 STFT 将信号搬移到时频域来进行噪声的抑制：
+$$
+Y(t,f) = X(t,f)+N(t,f)\tag{2}
+$$
+其中 $t$ 代表帧，$f$ 代表 frequency bin。</p>
+<hr>
+<h1 id="prior--posterior-snr">Prior &amp; Posterior SNR<a hidden class="anchor" aria-hidden="true" href="#prior--posterior-snr">#</a></h1>
+<p>传统噪声抑制最为关键的两个要素是：<strong>先验信噪比 $\xi(t,f)$ 和后验信噪比 $\gamma(t,f)$</strong>。计算方式如下：
+$$
+\xi(t,f) = \frac{|X(t,f)|^2}{|N(t,f)|^2} \tag{3}
+$$</p>
+<p>$$
+\gamma(t,f) = \frac{|Y(t,f)|^2}{|N(t,f)|^2} \tag{4}
+$$</p>
+<p>这两个信噪比可以将大部分传统的算法联系起来，形成一个统一的框架，所以在这里先为介绍。</p>
+<p>先验信噪比描述了干净语音功率和噪声功率之间的关系。后验信噪比则描述了带噪语音功率和噪声功率之间的关系。如果可以精确地估计这两个信噪比，就可以很好地对噪声进行抑制，所以传统算法基本围绕这两个信噪比的估计展开。</p>
+<p>值得注意的是，公式 $(3),(4)$ 都需要计算噪声的功率 $|N(t,f)|^2$，处理这个问题的方法是：<strong>噪声估计</strong>。</p>
+<p>另一个注意点，公式 $(3)$ 要求计算语音信号的功率 $|X(t,f)|^2$ （但一般不直接求取），处理这个问题的方法是：<strong>判决引导法 (DDA)。</strong></p>
+<hr>
+<h1 id="noise-estimation">Noise Estimation<a hidden class="anchor" aria-hidden="true" href="#noise-estimation">#</a></h1>
+<p>首先处理噪声估计的问题。传统算法下噪声估计有三种重要思想：</p>
+<ol>
+<li>噪声能量比较平稳，而且带语音的片段能量高于纯噪声的片段，所以可以通过<strong>跟踪功率最小值</strong>来获取噪声估计。</li>
+<li>噪声功率估计想要稳定，通常要对功率谱进行平滑处理，也就是进行<strong>递归平均</strong>。</li>
+<li>结合<strong>语音存在和不存在的概率</strong>，调节噪声估计在语音存在/不存在时各自的权重。</li>
+</ol>
+<p>这三种思想各自都有对应的算法，在这里只介绍集合了三种思想的最小值控制的递归平均 (minima controlled recursive averaging, MCRA) 算法。</p>
+<h2 id="mcra">MCRA<a hidden class="anchor" aria-hidden="true" href="#mcra">#</a></h2>
+<p><strong>针对3</strong>，MCRA算法将噪声估计划分为了两类：</p>
+<p>$$
+\begin{align}
+speech\ absent:&amp; |N(t+1,f)|^2_{sa} = \alpha |N(t,f)|^2 + (1-\alpha)|Y(t,f)|^2 \tag{5} \\
+speech\ present:&amp; |N(t+1,f)|^2_{sp} = |N(t,f)|^2\tag{6}
+\end{align}
+$$</p>
+<p>第一个式子代表语音不存在的时候，此时需要对噪声进行重新的估计，同时<strong>针对2</strong>使用了递归平均来稳定噪声的估计。</p>
+<p>第二个式子代表语音存在的时候，因为此时语音存在，所以噪声延续上一帧的估计。</p>
+<p><strong>针对3</strong>，设定一个语音存在概率 $p(t,f)$ 作为权重来将噪声估计的式子写为一个：
+$$
+|N(t+1,f)|^2 = p(t,f)\times |N(t+1,f)|^2_{sp} + (1-p(t,f))\times |N(t,f)|^2_{sa} \tag{7}
+$$
+此时需要对语音存在概率 $p(t,f)$ 进行估计，
+$$
+p(t+1,f) = \alpha_p p(t,f)+(1-\alpha_p)\delta [S_r(t,f)-\Delta] \tag{8}
+$$
+上式使用了<strong>针对2</strong>的递归平均来计算，以稳定对于语音存在概率的估计，其中 $\delta[\cdot]$ 代表指示函数。$S_r(t,f)$ 的计算公式如下：
+$$
+S_r(t,f) = \frac{\sum_{i=-n}^{n}{w(i)|Y(t,f+i)|^2}}{min [\sum_{i=-n}^{n}{w(i)|Y(t-1,f+i)|^2},\sum_{i=-n}^{n}{w(i)|Y(t,f+i)|^2}]}\tag{9}
+$$
+上式分号的上半部分 $\sum_{i=-n}^{n}{w(i)|Y(t,k+i)|^2}$ 代表对邻近频率点进行功率的平均，下半部分 $min[\cdot]$ 则代表不断获取局部的最小功率。<strong>整个式子的含义在于求得当前帧的功率与局部帧的最小功率的比值 $S_r(t,f)$  ，如果这个比值大于 $\Delta$ ，那么就可以认为当前帧的能量是比较高的，需要用来更新对于语音存在概率的估计</strong>。这种想法来源于<strong>针对1</strong>的最小值功率的跟踪。</p>
+<h2 id="summary">Summary<a hidden class="anchor" aria-hidden="true" href="#summary">#</a></h2>
+<p>整个MCRA算法是比较简单的，思路在于先通过 $(8),(9)$ 求取语音存在概率 $p(t,f)$ ，然后就可以根据 $(7)$ 来进行噪声的估计了。</p>
+<hr>
+<h1 id="prior-snr-estimation">Prior SNR Estimation<a hidden class="anchor" aria-hidden="true" href="#prior-snr-estimation">#</a></h1>
+<p>通过对噪声功率的估计获取了 $|N(t,f)|^2$ ，同时带噪语音的功率 $|Y(t,f)|^2$ 也可以直接获取。因此根据 $(4)$ 可以得到后验信噪比 $\gamma(t,f)$ 的估计。但先验信噪比应该如何估计呢？</p>
+<p>不妨大胆一点，我们假设<strong>噪声和语音是不相关的</strong>，可以得到：
+$$
+\begin{align}
+|Y(t,f)|^2 &amp;= Y(t,f) \times Y^*(t,f) \tag{10}\\
+&amp;= [X(t,f)+N(t,f)] \times [X(t,f)+N(t,f)]^{\star} \tag{11}\\
+&amp;= |X(t,f)|^2 +|N(t,f)|^2\tag{12}
+\end{align}
+$$
+这样，我们就可以得到干净语音的功率估计为：
+$$
+|X(t,f)|^2 = |Y(t,f)|^2 - |N(t,f)|^2 \tag{13}
+$$
+此时就可以通过 $(3)$ 来计算先验信噪比了。当然，我们还可以获得先验信噪比和后验信噪比的关系式：
+$$
+\xi(t,f) = \frac{|Y(t,f)|^2-|N(t,f)|^2}{|N(t,f)|^2}= \gamma(t,f)-1 \tag{14}
+$$
+需要注意到，理论上分析有 $|Y(t,f)|^2 \ge |N(t,f)|^2$ ，<strong>可是 $|N(t,f)|^2$ 是通过噪声估计得到的，存在大于 $|Y(t,f)|^2$ 的可能性</strong>，所以通过后验信噪比来估计先验信噪比还需要加入 $max[\cdot]$ 函数来保证非负：
+$$
+\xi(t,f) =max[\gamma(t,f)-1, 0] \tag{15}
+$$</p>
+<h2 id="dda">DDA<a hidden class="anchor" aria-hidden="true" href="#dda">#</a></h2>
+<p>但是，实际中一般会<strong>采取DDA来实现更加精确的估计</strong>：
+$$
+\xi(t,f) = \alpha \xi(t-1,f) + (1-\alpha)max[\gamma(t,f)-1,0] \tag{16}
+$$
+注意到上式其实就是一个递归平均，第一项 $\xi(t-1,f)$ 为前一帧估计的先验信噪比，第二项 $max[\gamma(t,f)-1,0]$ 是当前帧估计的先验信噪比。</p>
+<h2 id="summary-1">Summary<a hidden class="anchor" aria-hidden="true" href="#summary-1">#</a></h2>
+<p>对于先验信噪比的估计核心之一在于求得后验信噪比 $\gamma(t,f)$ ，而后验信噪比本质上又和噪声估计息息相关。所以对于噪声的估计是传统里需要着重处理的问题。（但是，似乎在神经网络部分很少见到有人尝试对噪声进行估计了，可能因为估计难度比较高？）</p>
+<hr>
+<h1 id="noise-suppression">Noise Suppression<a hidden class="anchor" aria-hidden="true" href="#noise-suppression">#</a></h1>
+<p>前面介绍了先验信噪比和后验信噪比的定义及其求法，但可能你还云里雾里不清楚为什么需要求这两个信噪比，而在这里我将通过几个经典的噪声抑制算法向你展示其美妙之处。</p>
+<h2 id="1-spectral-subtraction">1. Spectral Subtraction<a hidden class="anchor" aria-hidden="true" href="#1-spectral-subtraction">#</a></h2>
+<p>顾名思义，<strong>谱减法就是从带噪语音功率谱减去噪声功率谱，得到干净语音的功率谱</strong>。那么会有下面的式子：
+$$
+\begin{align}
+|X(t,f)|^2 &amp;= |Y(t,f)|^2-|N(t,f)|^2 \tag{17} \\
+&amp;= [1-\frac{1}{\gamma(t,f)}]\times |Y(t,f)|^2 \tag{18}
+\end{align}
+$$
+所以，只需要求得后验信噪比 $\gamma(t,f)$ 就可以实现谱减法了。</p>
+<h2 id="2-wiener-filter">2. Wiener Filter<a hidden class="anchor" aria-hidden="true" href="#2-wiener-filter">#</a></h2>
+<p>维纳滤波只做一件事：实现真实信号 $X(t,f)$ 与估计信号 $\hat X(t,f)$ 的均方误差最小。而噪声抑制的方式是通过计算滤波器实现滤波：
+$$
+\hat X(t,f) = H(t,f)Y(t,f) \tag{19}
+$$
+均方误差最小的优化式子为：
+$$
+\begin{align}
+min\ J =&amp; E {(X(t,f)-\hat X(t,f))(X(t,f)-\hat X(t,f))^* } \tag{20}\\
+=&amp; |X(t,f)|^2+|H(t,f)|^2|Y(t,f)|^2 \\
+&amp;-X(t,f)H^{\star}(t,f)Y^{\star}(t,f) - X^{\star}(t,f)H(t,f)Y(t,f) \tag{21}
+\end{align}
+$$
+然后求梯度，找到最小值：
+$$
+\nabla J_{H(t,f)} = 2H(t,f)|Y(t,f)|^2 - X(t,f)Y^{\star}(t,f)-X^{\star}(t,f)Y(t,f)=0 \tag{22}
+$$
+上式可以得到：
+$$
+\begin{align}
+H(t,f) &amp;= \frac{X(t,f)Y^{\star}(t,f)}{|Y(t,f)|^2} \tag{23}\\
+&amp;= \frac{X(t,f)(X^{\star}(t,f)+N^{\star}(t,f))}{|X(t,f)|^2+|N(t,f)|^2}\tag{24}\\
+&amp;= \frac{|X(t,f)|^2}{|X(t,f)|^2+|N(t,f)|^2}\tag{25}\\
+&amp;= \frac{\xi(t,f)}{1+\xi(t,f)}\tag{26}
+\end{align}
+$$
+注意上式 $(23)\rightarrow(24)$ 使用了噪声和语音不相关的特性来得到分号下边，$(24)\rightarrow(25)$ 同样使用了噪声和语音不相关特性来使得 $X(t,f)N^{\star}(t,f)=0$ 。那么整个维纳滤波就可以转化为下式：
+$$
+\begin{align}
+X(t,f) &amp;= H(t,f)Y(t,f)\tag{27}\\
+&amp;= \frac{\xi(t,f)}{1+\xi(t,f)}Y(t,f)\tag{28}
+\end{align}
+$$
+所以，只需要求得先验信噪比 $\xi(t,f)$ 就可以实现维纳滤波了。（另一个有意思的点是，维纳滤波是复数谱上的估计，而不仅仅是幅度谱。）</p>
+<h2 id="3-statistic-based-model">3. Statistic-Based Model<a hidden class="anchor" aria-hidden="true" href="#3-statistic-based-model">#</a></h2>
+<p>这一类方法一律依赖贝叶斯准则：
+$$
+P(X|Y) = \frac{P(Y|X)P(X)}{P(Y)}\tag{29}
+$$
+上式中 $P(X|Y)$ 称为后验， $P(Y|X)$ 称为似然， $P(X)$ 称为先验，$P(Y)$ 称为证据。当最大化后验概率的时候称之为 MAP ，最大化似然的时候称之为 MLE。这一类估计需要复杂的数学推理，在这里就不进行了。</p>
+<p>但是，同样地其噪声抑制的表达式仍旧可以写为（以下以 MLE 为例子）：
+$$
+|X(t,f)| = [ \frac{1}{2}+\frac{1}{2}\sqrt{\frac{\xi_(t,f)}{1+\xi(t,f)}} ]|Y(t,f)|\tag{30}
+$$
+可以看到，仍旧可以通过计算 $\xi(t,f)$ 先验信噪比来实现噪声抑制。</p>
+<h3 id="omlsa">OMLSA<a hidden class="anchor" aria-hidden="true" href="#omlsa">#</a></h3>
+<p>基于统计学方法的最为出名的，可能还得是 OMLSA 算法了，其结合了两种思想：<strong>log-MMSE 最优估计器和语音存在概率</strong>。其增益函数的表达式如下：
+$$
+\begin{align}
+speech\ absent:&amp;G_{sa}(t,f) = G_{min}(t,f) \tag{31}\\
+speech\ present:&amp;G_{sp}(t,f) = \frac{\xi(t,f)}{1+\xi(t,f)}\int_{v(t,f)}^{\infty}\frac{1}{2}\frac{e^{-t}}{t}dt \tag{32}
+\end{align}
+$$
+其中 $v(t,f) = \frac{\xi(t,f)\gamma(t,f)}{1+\xi(t,f)}$。</p>
+<p>与 MCRA 算法一致的，<strong>两者都需要估计语音存在概率 $p(t,f)$</strong>，通过语音存在概率可以将整个增益式子写为：
+$$
+G(t,f) = G_{sp}(t,f)^{p(t,f)}\times G_{sa}(t,f)^{1-p(t,f)} \tag{33}
+$$
+与 MCRA 算法不一致的是，<strong>两者估计语音存在概率 $p(t,f)$ 的方式不一样</strong>，OMLSA 采取的估计方式为：
+$$
+p(t,f) = [1+\frac{q(t,f)}{1-q(t,f)}\times(1+\xi(t,f))\times e^{-v(t,f)}]^{-1}
+\tag{34}
+$$
+其中 $q(t,f)$ 为语音缺失概率，也就是将<strong>语音存在概率通过 $(34)$ 转化为了求解语音缺失概率</strong>。语音缺失概率计算公式为：
+$$
+q(t,f) = 1-p_{local}(t,f)\times p_{global}(t,f)\times p_{frame}(t,f) \tag{35}
+$$
+将求解转化为了三个语音存在概率 $p_{local}(t,f), p_{global}(t,f), p_{frame}(t,f)$ 进行计算。（真是绕的不行= =，具体这三个概率的计算见论文）</p>
+<h3 id="summary-2">summary<a hidden class="anchor" aria-hidden="true" href="#summary-2">#</a></h3>
+<p>OMLSA 的增益函数的计算方式其实就两个关键：logMMSE 最优估计器和语音存在概率。</p>
+<p>在计算的时候需要首先通过计算语音缺失概率 $q(t,f)$ ，然后得到语音存在概率 $p(t,f)$ ，接着通过 $(31),(32),(33)$ 来计算增益式子。</p>
+<p>值得注意的是增益式子同样是由先验信噪比 $\xi(t,f)$ 和后验信噪比 $\gamma(t,f)$ 构成的。</p>
+<hr>
+<h1 id="mcra-omlsa">MCRA-OMLSA<a hidden class="anchor" aria-hidden="true" href="#mcra-omlsa">#</a></h1>
+<p>由 cohen 提出的 MCRA-OMLSA 是一个非常经典的噪声抑制算法。其将语音存在概率分别用于噪声估计和增益函数的求解，使得能够在非稳态噪声的情况下也取得不错的性能。算法很简单，其实就是结合了OMLSA和MCRA，而在前面已经对两个算法进行介绍了，所以这里只给出一个流程框图：</p>
+<p><img loading="lazy" src="/image/OMLSA-MCRA%282%29.png" alt="OMLSA-MCRA(2)"  />
+</p>
+<p>上图忽略了一些计算的细节（尤其是语音缺失和语音存在概率的计算细节），但是大致上是按照这个流程走的。</p>
+<hr>
+<h1 id="traditional-vs-deep-learning">Traditional VS Deep-Learning<a hidden class="anchor" aria-hidden="true" href="#traditional-vs-deep-learning">#</a></h1>
+<h2 id="traditional">Traditional<a hidden class="anchor" aria-hidden="true" href="#traditional">#</a></h2>
+<p>就目前学习到的传统算法而言，都是基于下面的式子的：
+$$
+|X(t,f)| = G(t,f)|Y(t,f)| \tag{36}
+$$
+总体而言就是求解一个增益函数 $G(t,f)$ 来对幅度谱进行增强。</p>
+<p>这样做<strong>存在的问题</strong>：</p>
+<ol>
+<li>无法对相位进行增强（大部分）</li>
+<li>对于噪声估计的要求十分苛刻，因为先验信噪比和后验信噪比的估计都离不开噪声估计</li>
+</ol>
+<p>这样做<strong>带来的优点</strong>：</p>
+<ol>
+<li>不同于神经网络，这样做只需要很少，或者几乎没有参数的存储要求</li>
+<li>不同于神经网络，这样做运算量小了非常多</li>
+</ol>
+<h2 id="deep-learning">Deep-Learning<a hidden class="anchor" aria-hidden="true" href="#deep-learning">#</a></h2>
+<p>传统方法与深度学习的噪声抑制存在非常强的关联性。深度学习的噪声抑制式子为（下式仅考虑了幅度）：
+$$
+|X(t,f)|=M(t,f)|Y(t,f)| \tag{37}
+$$
+显然可以看到，<strong>深度学习中的掩膜 $M(t,f)$ (Mask) 实际上就是传统方法中的增益 $G(t,f)$ (Gain) 函数</strong>。</p>
+<p>而<strong>深度学习优势</strong>在于：</p>
+<ol>
+<li>可以将相位也考虑进网络的优化，使得掩膜变为复数掩膜，带来相比于传统算法更好的性能</li>
+<li>不再需要使用复杂的算法来估计噪声，先验，后验信噪比</li>
+<li>可以通过让网络来自行学习如何估计掩膜（也就是增益，但带来的就是对于训练数据的要求）</li>
+<li>能够处理更加复杂的噪声情况</li>
+</ol>
+<p>同时<strong>深度学习的缺点</strong>在于：</p>
+<ol>
+<li>运算量较大</li>
+<li>参数量较大</li>
+</ol>
+<hr>
+<h1 id="summary-3">Summary<a hidden class="anchor" aria-hidden="true" href="#summary-3">#</a></h1>
+<p>总体而言，传统的噪声抑制算法存在比较多的数学和工程知识，而且需要不少假设来简化理论推导。但是带来的是低复杂度，还有不错的效果。当然，由于对噪声估计的依赖，<strong>个人认为在使用神经网络去除部分噪声之后，将传统算法作为postfilter可能会是一个不错的选择。因为在通过神经网络消除部分噪声之后，可以尽可能保证带语音的片段能量高于纯噪声的片段，来满足噪声估计的要求。</strong></p>
+<p>在神经网络大行其道的如今，传统算法并不是不能发挥其作用。工程中，综合考虑运算复杂度和性能时，<strong>结合轻量化的神经网络和传统算法可能会是一个较好的选择。</strong></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yezhangyinge.github.io/tags/noise-suppression/">noise suppression</a></li>
+      <li><a href="https://yezhangyinge.github.io/tags/speech-enhancement/">speech enhancement</a></li>
+      <li><a href="https://yezhangyinge.github.io/tags/traditional/">traditional</a></li>
+      <li><a href="https://yezhangyinge.github.io/tags/mcra-omlsa/">MCRA-OMLSA</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://yezhangyinge.github.io/posts/20230926_tutorial_post_a_article/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>Post an article</span>
+  </a>
+</nav>
+
+  </footer><script src="https://utteranc.es/client.js"
+        repo="yezhangyinge/yezhangyinge.github.io"
+        issue-term="pathname"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://yezhangyinge.github.io">叶藏吟歌</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+});
+</script>
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>
