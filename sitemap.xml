@@ -2,10 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://yezhangyinge.github.io/categories/</loc>
+    <lastmod>2024-02-12T11:50:49+08:00</lastmod>
+  </url><url>
+    <loc>https://yezhangyinge.github.io/categories/linux/</loc>
+    <lastmod>2024-02-12T11:50:49+08:00</lastmod>
+  </url><url>
     <loc>https://yezhangyinge.github.io/posts/20240212_server_management_guide/</loc>
     <lastmod>2024-02-12T11:50:49+08:00</lastmod>
   </url><url>
+    <loc>https://yezhangyinge.github.io/tags/misc/</loc>
+    <lastmod>2024-02-12T11:50:49+08:00</lastmod>
+  </url><url>
     <loc>https://yezhangyinge.github.io/posts/</loc>
+    <lastmod>2024-02-12T11:50:49+08:00</lastmod>
+  </url><url>
+    <loc>https://yezhangyinge.github.io/tags/</loc>
     <lastmod>2024-02-12T11:50:49+08:00</lastmod>
   </url><url>
     <loc>https://yezhangyinge.github.io/</loc>
@@ -14,16 +26,7 @@
     <loc>https://yezhangyinge.github.io/posts/20240212_rules_about_server/</loc>
     <lastmod>2024-02-12T11:47:11+08:00</lastmod>
   </url><url>
-    <loc>https://yezhangyinge.github.io/categories/</loc>
-    <lastmod>2024-02-12T11:10:52+08:00</lastmod>
-  </url><url>
     <loc>https://yezhangyinge.github.io/posts/20240212_install_webrtc/</loc>
-    <lastmod>2024-02-12T11:10:52+08:00</lastmod>
-  </url><url>
-    <loc>https://yezhangyinge.github.io/tags/misc/</loc>
-    <lastmod>2024-02-12T11:10:52+08:00</lastmod>
-  </url><url>
-    <loc>https://yezhangyinge.github.io/tags/</loc>
     <lastmod>2024-02-12T11:10:52+08:00</lastmod>
   </url><url>
     <loc>https://yezhangyinge.github.io/categories/tutorial/</loc>

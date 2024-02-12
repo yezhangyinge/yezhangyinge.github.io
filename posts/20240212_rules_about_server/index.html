@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
 <title>Linux 服务器使用守则 | 叶藏吟歌</title>
-<meta name="keywords" content="" />
+<meta name="keywords" content="misc" />
 <meta name="description" content="一些关于实验室服务器使用你应该遵循的守则（中英都有，如果你不喜欢看中文，you can choose to read ENG version. = =）。">
 <meta name="author" content="yezhangyinge">
 <link rel="canonical" href="https://yezhangyinge.github.io/posts/20240212_rules_about_server/" />
@@ -97,7 +97,7 @@
   "name": "Linux 服务器使用守则",
   "description": "一些关于实验室服务器使用你应该遵循的守则（中英都有，如果你不喜欢看中文，you can choose to read ENG version. = =）。",
   "keywords": [
-    
+    "misc"
   ],
   "articleBody": "守则 当你使用服务器的时候，你 不 允许动别人的文件。\n当你需要存放大文件到服务器的时候，你 不 允许将文件存放于 /home/your_user_name 下。你 必须 将文件存放在 /data/your_user_name 下。否则，你的文件将被清除。 如果你在 /data 下没有对应的文件夹，你可以使用下面的指令创建一个：\nmkdir /data/your_user_name 你 不 允许使用 sudo 来运行安装程序，除非 你得到了允许。\n你 不 允许占用服务器的过长时间，除非 你事先通知了大家，或者有紧急的事务。否则，你的进程将会被暂停。\nRules When you are using the Linux server, you should NOT touch other people’s files.\nWhen you need to store an amount of data, you should NOT store it in /home/your_user_name. You MUST store it in /data/your_user_name. Or, your data will be deleted without notification. If you do not have a directory in /data, you can create it by yourself using the command below.\nmkdir /data/user_name You should NOT use sudo to install or run anything without permission.\nYou should NOT occupy a server for a long time. Or your process will be killed.\n",
   "wordCount" : "122",
@@ -320,6 +320,9 @@ If you do not have a directory in <code>/data</code>, you can create it by yours
   </div>
 
   <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yezhangyinge.github.io/tags/misc/">misc</a></li>
+    </ul>
 <nav class="paginav">
   <a class="prev" href="https://yezhangyinge.github.io/posts/20240212_server_management_guide/">
     <span class="title">« Prev Page</span>
