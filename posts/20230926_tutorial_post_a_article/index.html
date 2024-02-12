@@ -99,8 +99,8 @@
   "keywords": [
     "misc"
   ],
-  "articleBody": "Create a markdown file hugo new posts/file_name.md 将写好的.md文件内容放置在file_name.md文件内。\n之后，需要添加文件的tags, categorise 和 summary\ntags：一般是琐碎的，精准的 categories：一般是抽象的，泛指的 summary：总结这篇文章的内容 最后将draft设置为false，即可。\nPreview the file 写好文章后第一步不应该commit，而是在本地查看是否符合预期。\nhugo server 用上面的指令会先生成本地预览文件，在 http://localhost:1313/ 显示。\nCommit 要提交article到网页，首先需要进入到 D:/hugo-papermod 的文件夹下 然后按照下面的指令操作即可。\nhugo cd public git add . git commit -m \"update\" git push origin master Change favicon 首先需要生成favicon文件，到这个网站可以获取: https://www.logosc.cn/logo/favicon 然后将favicon文件全部放置在 D:/hugo-papermod/static 文件夹下面。然后转到 D:/hugo-papermod/config.yml 文件夹里面，修改为对应生成的favicon的文件即可 ",
-  "wordCount" : "53",
+  "articleBody": "Create a markdown file hugo new posts/file_name.md 将写好的.md文件内容放置在file_name.md文件内。之后，需要添加文件的tags, categorise 和 summary\ntags：一般是琐碎的，精准的 categories：一般是抽象的，泛指的 summary：总结这篇文章的内容 最后将draft设置为false，即可。\nPreview the file 写好文章后第一步不应该commit，而是在本地查看是否符合预期。\nhugo server 用上面的指令会先生成本地预览文件，在 http://localhost:1313/ 显示。\nCommit 要提交article到网页，首先需要进入到 D:/hugo-papermod 的文件夹下 然后按照下面的指令操作即可。\nhugo cd public git add . git commit -m \"update\" git push origin master Change favicon 首先需要生成favicon文件，到这个网站可以获取: https://www.logosc.cn/logo/favicon 然后将favicon文件全部放置在 D:/hugo-papermod/static 文件夹下面。然后转到 D:/hugo-papermod/config.yml 文件夹里面，修改为对应生成的favicon的文件即可 Post iamge 在上传图片的时候会有额外的操作，你需要将图片放置在 /image 文件下，并将原本图片的路径改为这个路径。（后续考虑改进这个缺陷）\n",
+  "wordCount" : "57",
   "inLanguage": "en",
   "datePublished": "2023-09-26T14:01:51+08:00",
   "dateModified": "2023-09-26T14:01:51+08:00",
@@ -218,7 +218,9 @@
                     <li>
                         <a href="#commit" aria-label="Commit">Commit</a></li>
                     <li>
-                        <a href="#change-favicon" aria-label="Change favicon">Change favicon</a>
+                        <a href="#change-favicon" aria-label="Change favicon">Change favicon</a></li>
+                    <li>
+                        <a href="#post-iamge" aria-label="Post iamge">Post iamge</a>
                     </li>
                 </ul>
             </div>
@@ -287,8 +289,7 @@
 
   <div class="post-content"><h1 id="create-a-markdown-file">Create a markdown file<a hidden class="anchor" aria-hidden="true" href="#create-a-markdown-file">#</a></h1>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo new posts/file_name.md
-</span></span></code></pre></div><p>将写好的.md文件内容放置在file_name.md文件内。<br>
-之后，需要添加文件的tags, categorise 和 summary</p>
+</span></span></code></pre></div><p>将写好的.md文件内容放置在file_name.md文件内。之后，需要添加文件的tags, categorise 和 summary</p>
 <ol>
 <li>tags：一般是琐碎的，精准的</li>
 <li>categories：一般是抽象的，泛指的</li>
@@ -309,10 +310,12 @@
 </span></span><span class="line"><span class="cl">git push origin master
 </span></span></code></pre></div><h1 id="change-favicon">Change favicon<a hidden class="anchor" aria-hidden="true" href="#change-favicon">#</a></h1>
 <p>首先需要生成favicon文件，到这个网站可以获取:
-<a href="https://www.logosc.cn/logo/favicon">https://www.logosc.cn/logo/favicon</a> <br>
+<a href="https://www.logosc.cn/logo/favicon">https://www.logosc.cn/logo/favicon</a>
 然后将favicon文件全部放置在 D:/hugo-papermod/static 文件夹下面。然后转到 D:/hugo-papermod/config.yml 文件夹里面，修改为对应生成的favicon的文件即可
 <img loading="lazy" src="/image/steps.jpg" alt="t"  />
 </p>
+<h1 id="post-iamge">Post iamge<a hidden class="anchor" aria-hidden="true" href="#post-iamge">#</a></h1>
+<p>在上传图片的时候会有额外的操作，你需要将图片放置在 <code>/image</code> 文件下，并将原本图片的路径改为这个路径。（后续考虑改进这个缺陷）</p>
 
 
   </div>

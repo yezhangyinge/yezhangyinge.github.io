@@ -10,7 +10,25 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 12 Feb 2024 11:10:52 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 12 Feb 2024 11:50:49 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux 服务器管理指南</title>
+      <link>https://yezhangyinge.github.io/posts/2024server_management_guide/</link>
+      <pubDate>Mon, 12 Feb 2024 11:50:49 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/2024server_management_guide/</guid>
+      <description>一些关于服务器管理的方法，方便后续管理服务器的人能够快速解决问题。</description>
+    </item>
+    
+    <item>
+      <title>Linux 服务器使用守则</title>
+      <link>https://yezhangyinge.github.io/posts/20240212_rules_about_server/</link>
+      <pubDate>Mon, 12 Feb 2024 11:47:11 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/20240212_rules_about_server/</guid>
+      <description>一些关于实验室服务器使用你应该遵循的守则（中英都有，如果你不喜欢看中文，you can choose to read ENG version. = =）。</description>
+    </item>
+    
     <item>
       <title>How to install Webrtc on WSL</title>
       <link>https://yezhangyinge.github.io/posts/20240212_install_webrtc/</link>
