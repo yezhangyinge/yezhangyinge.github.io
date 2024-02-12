@@ -144,6 +144,28 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2>How to install Webrtc on WSL
+    </h2>
+  </header>
+  <section class="entry-content">
+    <p>说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。
+What you need 在进行以下安装的操作之前先确保你有这几个东西：
+一台 PC 较为快速的网络 科学上网的途径 如果没有上述条件，不建议进行以下的步骤。
+Prepare WSL 既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）
+Download wsl 20.04版本：https://aka.ms/wslubuntu2004 18.04版本：https://aka.ms/wsl-ubuntu-1804 其他版本自行前往官网查找。
+Change file to .zip 下载后得到AppxBundle文件，将后缀名改为zip，然后解压。
+解压后得到如下内容：
+选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。
+Install 此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu&#43;版本， 然后将这个文件夹放到需要安装的目录下 点击ubuntu.exe进行安装 输入用户名 输入密码 确认密码 安装成功 More config 基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。
+按照下图操作
+打开 powershell 首先点击 1 位置，然后选择 settings 之后点击 2 位置，新增 profile 最后点击 3 位置，创建空的 profile 按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu....</p>
+  </section>
+  <footer class="entry-footer"><span title='2024-02-12 11:10:52 +0800 CST'>February 12, 2024</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;yezhangyinge</footer>
+  <a class="entry-link" aria-label="post link to How to install Webrtc on WSL" href="https://yezhangyinge.github.io/posts/20240212_install_webrtc/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2>Enable MathJax for Articles
     </h2>
   </header>
@@ -168,7 +190,7 @@
     </main>
     
 <footer class="footer">
-    <span>&copy; 2023 <a href="https://yezhangyinge.github.io">叶藏吟歌</a></span>
+    <span>&copy; 2024 <a href="https://yezhangyinge.github.io">叶藏吟歌</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &

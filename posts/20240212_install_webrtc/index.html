@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>How to install Webrtc on WSL | 叶藏吟歌</title>
+<meta name="keywords" content="misc" />
+<meta name="description" content="说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。
+What you need 在进行以下安装的操作之前先确保你有这几个东西：
+一台 PC 较为快速的网络 科学上网的途径 如果没有上述条件，不建议进行以下的步骤。
+Prepare WSL 既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）
+Download wsl 20.04版本：https://aka.ms/wslubuntu2004 18.04版本：https://aka.ms/wsl-ubuntu-1804 其他版本自行前往官网查找。
+Change file to .zip 下载后得到AppxBundle文件，将后缀名改为zip，然后解压。
+解压后得到如下内容：
+选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。
+Install 此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu&#43;版本， 然后将这个文件夹放到需要安装的目录下 点击ubuntu.exe进行安装 输入用户名 输入密码 确认密码 安装成功 More config 基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。
+按照下图操作
+打开 powershell 首先点击 1 位置，然后选择 settings 之后点击 2 位置，新增 profile 最后点击 3 位置，创建空的 profile 按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu.">
+<meta name="author" content="yezhangyinge">
+<link rel="canonical" href="https://yezhangyinge.github.io/posts/20240212_install_webrtc/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.fa38f142c4b8b57ef306935218cd62a739b9441a67655403d99dbebefdab2630.css" integrity="sha256-&#43;jjxQsS4tX7zBpNSGM1ipzm5RBpnZVQD2Z2&#43;vv2rJjA=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yezhangyinge.github.io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yezhangyinge.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yezhangyinge.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yezhangyinge.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yezhangyinge.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.119.0">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="How to install Webrtc on WSL" />
+<meta property="og:description" content="说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。
+What you need 在进行以下安装的操作之前先确保你有这几个东西：
+一台 PC 较为快速的网络 科学上网的途径 如果没有上述条件，不建议进行以下的步骤。
+Prepare WSL 既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）
+Download wsl 20.04版本：https://aka.ms/wslubuntu2004 18.04版本：https://aka.ms/wsl-ubuntu-1804 其他版本自行前往官网查找。
+Change file to .zip 下载后得到AppxBundle文件，将后缀名改为zip，然后解压。
+解压后得到如下内容：
+选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。
+Install 此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu&#43;版本， 然后将这个文件夹放到需要安装的目录下 点击ubuntu.exe进行安装 输入用户名 输入密码 确认密码 安装成功 More config 基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。
+按照下图操作
+打开 powershell 首先点击 1 位置，然后选择 settings 之后点击 2 位置，新增 profile 最后点击 3 位置，创建空的 profile 按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yezhangyinge.github.io/posts/20240212_install_webrtc/" /><meta property="og:image" content="https://yezhangyinge.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-02-12T11:10:52&#43;08:00" />
+<meta property="article:modified_time" content="2024-02-12T11:10:52&#43;08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yezhangyinge.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="How to install Webrtc on WSL"/>
+<meta name="twitter:description" content="说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。
+What you need 在进行以下安装的操作之前先确保你有这几个东西：
+一台 PC 较为快速的网络 科学上网的途径 如果没有上述条件，不建议进行以下的步骤。
+Prepare WSL 既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）
+Download wsl 20.04版本：https://aka.ms/wslubuntu2004 18.04版本：https://aka.ms/wsl-ubuntu-1804 其他版本自行前往官网查找。
+Change file to .zip 下载后得到AppxBundle文件，将后缀名改为zip，然后解压。
+解压后得到如下内容：
+选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。
+Install 此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu&#43;版本， 然后将这个文件夹放到需要安装的目录下 点击ubuntu.exe进行安装 输入用户名 输入密码 确认密码 安装成功 More config 基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。
+按照下图操作
+打开 powershell 首先点击 1 位置，然后选择 settings 之后点击 2 位置，新增 profile 最后点击 3 位置，创建空的 profile 按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://yezhangyinge.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "How to install Webrtc on WSL",
+      "item": "https://yezhangyinge.github.io/posts/20240212_install_webrtc/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How to install Webrtc on WSL",
+  "name": "How to install Webrtc on WSL",
+  "description": "说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。\nWhat you need 在进行以下安装的操作之前先确保你有这几个东西：\n一台 PC 较为快速的网络 科学上网的途径 如果没有上述条件，不建议进行以下的步骤。\nPrepare WSL 既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）\nDownload wsl 20.04版本：https://aka.ms/wslubuntu2004 18.04版本：https://aka.ms/wsl-ubuntu-1804 其他版本自行前往官网查找。\nChange file to .zip 下载后得到AppxBundle文件，将后缀名改为zip，然后解压。\n解压后得到如下内容：\n选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。\nInstall 此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu+版本， 然后将这个文件夹放到需要安装的目录下 点击ubuntu.exe进行安装 输入用户名 输入密码 确认密码 安装成功 More config 基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。\n按照下图操作\n打开 powershell 首先点击 1 位置，然后选择 settings 之后点击 2 位置，新增 profile 最后点击 3 位置，创建空的 profile 按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu.",
+  "keywords": [
+    "misc"
+  ],
+  "articleBody": " 说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。\nWhat you need 在进行以下安装的操作之前先确保你有这几个东西：\n一台 PC 较为快速的网络 科学上网的途径 如果没有上述条件，不建议进行以下的步骤。\nPrepare WSL 既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）\nDownload wsl 20.04版本：https://aka.ms/wslubuntu2004 18.04版本：https://aka.ms/wsl-ubuntu-1804 其他版本自行前往官网查找。\nChange file to .zip 下载后得到AppxBundle文件，将后缀名改为zip，然后解压。\n解压后得到如下内容：\n选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。\nInstall 此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu+版本， 然后将这个文件夹放到需要安装的目录下 点击ubuntu.exe进行安装 输入用户名 输入密码 确认密码 安装成功 More config 基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。\n按照下图操作\n打开 powershell 首先点击 1 位置，然后选择 settings 之后点击 2 位置，新增 profile 最后点击 3 位置，创建空的 profile 按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu.exe 的路径。\n之后就可以在 第一张图的 1 位置快速选择并打开自己的 wsl 了。\nInstall webrtc 本人使用的是 ubuntu2204，所以推荐你使用2204版本。当然版本不是一个大问题，不要安装太老的版本就行。\n准备好了 wsl 之后，就可以开始着手安装 webrtc 了（期待的搓手手~）。\n⚠⚠⚠以下操作均在 /home/your_name/ 路径下进行操作，在编辑 proxy 和 环境变量的时候需要将对应的 ipv4_address, proxy_port, your_name 设置为你自己的而不是直接 copy and paste，否则是一定会出错的。\nOpen wsl 第一步打开你辛辛苦苦安装好的 wsl，然后在 bash 下进行操作。\nProxy 为了能够拉取所需要的文件，首先你需要做的是配置好代理 (设置之前需要确保打开了 allow_lan)。配置方式如下：\nexport http_proxy=http://ipv4_address:proxy_port export https_proxy=http://ipv4_address:proxy_port export all_proxy=socks5://ipv4_address:proxy_port Install depot_tools 因为 webrtc 是通过 depot_tools 进行管理的，所以首先需要安装 depot_tools 。\ngit clone https://chromium.googlesource.com/chromium/tools/depot_tools.git 之后需要将 depot_tools 的路径设置为全局变量：\nvim ~/.bashrc # .bashrc 添加如下一行 export PATH=\"$PATH:/home/your_username/depot_tools\" # 添加完毕后保存并退出，执行以下语句 source ~/.bashrc 禁用 cpid：\nexport DEPOT_TOOLS_UPDATE=0 为 depot_tools 下载设置代理：\nvim .boto # 在 .boto 文件中输入以下内容 [Boto] proxy = ipv4_address proxy_port = proxy_port # 添加完内容后,保存 .boto 文件并将其设置为环境变量 export NO_AUTH_BOTO_CONFIG=/home/your_username/.boto Get webrtc 按照以下操作：\n# 创建 webrtc 文件夹，并进入 mkdir webrtc cd webrtc # 获取 webrtc 代码 fetch --nohooks webrtc # 由于文件比较多，所以可能会中断，如果中断了就使用下面的语句重新进行 gclient sync 在进行这一步操作的时候一定要有耐心，当然如果你的网速很快，那你的耐心忽略不计 = = 。\nInstall dependencies 使用以下语句安装依赖\ncd /home/your_username/webrtc/src ./build/install-build-deps.sh Compile 首先使用 depot_tools 中的 gn 语句来生成 ninja 工程文件：\ngn gen out/Default 然后进行编译：\nninja -C out/Default 编译成功之后可以在 src/out/Default/obj 文件夹里面看到 libwebrtc.a 文件，就代表成功了。\nUpdate 如果需要更新代码采取以下的步骤（当然本人没有尝试过，不想冒这个风险 = = ）：\ngit checkout master git pull origin master gclient sync Reference 以下是一些参考的链接，同时也包含了踩坑的一些解决方式，如果踩坑了不妨看看下面的链接，看看有没有类似的解决方式：\nUbuntu 20.04编译WebRTC_ubuntu 编译webrtc-CSDN博客\nubuntu - fetch v8 : \"-bash: fetch: command not found\" - Super User\n",
+  "wordCount" : "272",
+  "inLanguage": "en",
+  "datePublished": "2024-02-12T11:10:52+08:00",
+  "dateModified": "2024-02-12T11:10:52+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "yezhangyinge"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yezhangyinge.github.io/posts/20240212_install_webrtc/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "叶藏吟歌",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yezhangyinge.github.io/android-chrome-192x192.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yezhangyinge.github.io" accesskey="h" title="叶藏吟歌 (Alt + H)">叶藏吟歌</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yezhangyinge.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://yezhangyinge.github.io">Home</a>&nbsp;»&nbsp;<a href="https://yezhangyinge.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      How to install Webrtc on WSL
+    </h1>
+    <div class="post-meta"><span title='2024-02-12 11:10:52 +0800 CST'>February 12, 2024</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;yezhangyinge
+      
+    </div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#what-you-need" aria-label="What you need">What you need</a></li>
+                    <li>
+                        <a href="#prepare-wsl" aria-label="Prepare WSL">Prepare WSL</a><ul>
+                            
+                    <li>
+                        <a href="#download-wsl" aria-label="Download wsl">Download wsl</a></li>
+                    <li>
+                        <a href="#change-file-to-zip" aria-label="Change file to .zip">Change file to .zip</a></li>
+                    <li>
+                        <a href="#install" aria-label="Install">Install</a></li>
+                    <li>
+                        <a href="#more-config" aria-label="More config">More config</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#install-webrtc" aria-label="Install webrtc">Install webrtc</a><ul>
+                            
+                    <li>
+                        <a href="#open-wsl" aria-label="Open wsl">Open wsl</a></li>
+                    <li>
+                        <a href="#proxy" aria-label="Proxy">Proxy</a></li>
+                    <li>
+                        <a href="#install-depot_tools" aria-label="Install depot_tools">Install depot_tools</a></li>
+                    <li>
+                        <a href="#get-webrtc" aria-label="Get webrtc">Get webrtc</a></li>
+                    <li>
+                        <a href="#install-dependencies" aria-label="Install dependencies">Install dependencies</a></li>
+                    <li>
+                        <a href="#compile" aria-label="Compile">Compile</a></li>
+                    <li>
+                        <a href="#update" aria-label="Update">Update</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#reference" aria-label="Reference">Reference</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><blockquote>
+<p>说在前面：写这个教程是因为自己尝试了不少方式来安装 webrtc，windows，linux，wsl 都进行了尝试。（折磨的不行= =）终于在这个假期将 webrtc 成功安装在了自己的 PC 上，所以特此记录，希望对后续希望学习 webrtc 的人能够有所帮助。毕竟，对于新手而言最难的第一步就是安装和配置环境。</p>
+</blockquote>
+<h1 id="what-you-need">What you need<a hidden class="anchor" aria-hidden="true" href="#what-you-need">#</a></h1>
+<p>在进行以下安装的操作之前先确保你有这几个东西：</p>
+<ol>
+<li>一台 PC</li>
+<li>较为快速的网络</li>
+<li>科学上网的途径</li>
+</ol>
+<p><strong>如果没有上述条件，不建议进行以下的步骤</strong>。</p>
+<h1 id="prepare-wsl">Prepare WSL<a hidden class="anchor" aria-hidden="true" href="#prepare-wsl">#</a></h1>
+<p>既然需要将 webrtc 安装在 wsl 上，那么第一步就是准备好 wsl。这一部分其实本人已经写了完整的教程了，这里将过程简单记录如下。（此外需要说明的是，安装 wsl 也可以直接通过 Microsoft Store 来安装，但是本人不喜欢将大文件安装在 C 盘，所以以下 wsl 的安装方是可以在任意磁盘下进行的。）</p>
+<h2 id="download-wsl">Download wsl<a hidden class="anchor" aria-hidden="true" href="#download-wsl">#</a></h2>
+<ul>
+<li>20.04版本：https://aka.ms/wslubuntu2004</li>
+<li>18.04版本：https://aka.ms/wsl-ubuntu-1804</li>
+</ul>
+<p>其他版本自行前往<a href="https://docs.microsoft.com/zh-cn/windows/wsl/install-manual">官网</a>查找。</p>
+<h2 id="change-file-to-zip">Change file to .zip<a hidden class="anchor" aria-hidden="true" href="#change-file-to-zip">#</a></h2>
+<p>下载后得到AppxBundle文件，将后缀名改为zip，然后解压。</p>
+<p>解压后得到如下内容：</p>
+<p><img loading="lazy" src="D:%5chugo-PaperMod%5ccontent%5cimage%5cwsl1.jpg" alt="img"  />
+</p>
+<p>选择x64或ARM64的安装包均可均可，将后缀名改为zip，然后解压。</p>
+<h2 id="install">Install<a hidden class="anchor" aria-hidden="true" href="#install">#</a></h2>
+<ol>
+<li>此时需要先将解压后的文件放到一个文件夹（任意你开心的文件夹就行），命名为对应的ubuntu+版本，</li>
+<li>然后将这个文件夹放到需要安装的目录下</li>
+<li>点击ubuntu.exe进行安装</li>
+<li>输入用户名</li>
+<li>输入密码</li>
+<li>确认密码</li>
+<li>安装成功</li>
+</ol>
+<h2 id="more-config">More config<a hidden class="anchor" aria-hidden="true" href="#more-config">#</a></h2>
+<p>基本上，本人使用的是 powershell 来进行 windows 的操作，所以推荐将 wsl 的快捷打开加入到 powershell。</p>
+<p>按照下图操作</p>
+<ol>
+<li>打开 powershell</li>
+<li>首先点击 1 位置，然后选择 settings</li>
+<li>之后点击 2 位置，新增 profile</li>
+<li>最后点击 3 位置，创建空的 profile</li>
+</ol>
+<p><img loading="lazy" src="D:%5chugo-PaperMod%5ccontent%5cimage%5cwsl1.png" alt="img"  />
+</p>
+<p>按照上述操作之后会看到以下界面，可以修改 Name 项将其命名为 ubuntu-xxx，然后将 command line 位置的路径改为安装好的 wsl 的 ubuntu.exe 的路径。</p>
+<img src="D:\hugo-PaperMod\content\image\wsl2.png" alt="img" style="zoom:50%;" />
+<p>之后就可以在 第一张图的 1 位置快速选择并打开自己的 wsl 了。</p>
+<h1 id="install-webrtc">Install webrtc<a hidden class="anchor" aria-hidden="true" href="#install-webrtc">#</a></h1>
+<blockquote>
+<p>本人使用的是 ubuntu2204，所以推荐你使用2204版本。当然版本不是一个大问题，不要安装太老的版本就行。</p>
+</blockquote>
+<p>准备好了 wsl 之后，就可以开始着手安装 webrtc 了（期待的搓手手~）。</p>
+<p><strong>⚠⚠⚠以下操作均在 <code>/home/your_name/</code> 路径下进行操作，在编辑 proxy 和 环境变量的时候需要将对应的 <code>ipv4_address, proxy_port, your_name</code> 设置为你自己的而不是直接 copy and paste，否则是一定会出错的。</strong></p>
+<h2 id="open-wsl">Open wsl<a hidden class="anchor" aria-hidden="true" href="#open-wsl">#</a></h2>
+<p>第一步打开你辛辛苦苦安装好的 wsl，然后在 bash 下进行操作。</p>
+<h2 id="proxy">Proxy<a hidden class="anchor" aria-hidden="true" href="#proxy">#</a></h2>
+<p>为了能够拉取所需要的文件，首先你需要做的是配置好代理 (设置之前需要确保打开了 allow_lan)。配置方式如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">http_proxy</span><span class="o">=</span>http://ipv4_address:proxy_port
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span>http://ipv4_address:proxy_port
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">all_proxy</span><span class="o">=</span>socks5://ipv4_address:proxy_port
+</span></span></code></pre></div><h2 id="install-depot_tools">Install depot_tools<a hidden class="anchor" aria-hidden="true" href="#install-depot_tools">#</a></h2>
+<p>因为 webrtc 是通过 depot_tools 进行管理的，所以首先需要安装 depot_tools 。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+</span></span></code></pre></div><p>之后需要将 depot_tools 的路径设置为全局变量：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim ~/.bashrc
+</span></span><span class="line"><span class="cl"><span class="c1"># .bashrc 添加如下一行</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$PATH</span><span class="s2">:/home/your_username/depot_tools&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 添加完毕后保存并退出，执行以下语句</span>
+</span></span><span class="line"><span class="cl"><span class="nb">source</span> ~/.bashrc
+</span></span></code></pre></div><p>禁用 cpid：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DEPOT_TOOLS_UPDATE</span><span class="o">=</span><span class="m">0</span>
+</span></span></code></pre></div><p>为 depot_tools 下载设置代理：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim .boto
+</span></span><span class="line"><span class="cl"><span class="c1"># 在 .boto 文件中输入以下内容</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>Boto<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">proxy</span> <span class="o">=</span> ipv4_address
+</span></span><span class="line"><span class="cl"><span class="nv">proxy_port</span> <span class="o">=</span> proxy_port
+</span></span><span class="line"><span class="cl"><span class="c1"># 添加完内容后,保存 .boto 文件并将其设置为环境变量</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">NO_AUTH_BOTO_CONFIG</span><span class="o">=</span>/home/your_username/.boto
+</span></span></code></pre></div><h2 id="get-webrtc">Get webrtc<a hidden class="anchor" aria-hidden="true" href="#get-webrtc">#</a></h2>
+<p>按照以下操作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 创建 webrtc 文件夹，并进入</span>
+</span></span><span class="line"><span class="cl">mkdir webrtc
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> webrtc
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取 webrtc 代码</span>
+</span></span><span class="line"><span class="cl">fetch --nohooks webrtc
+</span></span><span class="line"><span class="cl"><span class="c1"># 由于文件比较多，所以可能会中断，如果中断了就使用下面的语句重新进行</span>
+</span></span><span class="line"><span class="cl">gclient sync
+</span></span></code></pre></div><blockquote>
+<p>在进行这一步操作的时候一定要有耐心，当然如果你的网速很快，那你的耐心忽略不计 = = 。</p>
+</blockquote>
+<h2 id="install-dependencies">Install dependencies<a hidden class="anchor" aria-hidden="true" href="#install-dependencies">#</a></h2>
+<p>使用以下语句安装依赖</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /home/your_username/webrtc/src
+</span></span><span class="line"><span class="cl">./build/install-build-deps.sh
+</span></span></code></pre></div><h2 id="compile">Compile<a hidden class="anchor" aria-hidden="true" href="#compile">#</a></h2>
+<p>首先使用 depot_tools 中的 <code>gn</code> 语句来生成 ninja 工程文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gn gen out/Default
+</span></span></code></pre></div><p>然后进行编译：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ninja -C out/Default
+</span></span></code></pre></div><p>编译成功之后可以在 <code>src/out/Default/obj</code> 文件夹里面看到 <code>libwebrtc.a</code> 文件，就代表成功了。</p>
+<h2 id="update">Update<a hidden class="anchor" aria-hidden="true" href="#update">#</a></h2>
+<p>如果需要更新代码采取以下的步骤（当然本人没有尝试过，不想冒这个风险 = = ）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git checkout master
+</span></span><span class="line"><span class="cl">git pull origin master
+</span></span><span class="line"><span class="cl">gclient sync
+</span></span></code></pre></div><h1 id="reference">Reference<a hidden class="anchor" aria-hidden="true" href="#reference">#</a></h1>
+<p>以下是一些参考的链接，同时也包含了踩坑的一些解决方式，如果踩坑了不妨看看下面的链接，看看有没有类似的解决方式：</p>
+<p><a href="https://blog.csdn.net/Innovator_cjx/article/details/119490487">Ubuntu 20.04编译WebRTC_ubuntu 编译webrtc-CSDN博客</a></p>
+<p><a href="https://superuser.com/questions/1272343/fetch-v8-bash-fetch-command-not-found">ubuntu - fetch v8 : &quot;-bash: fetch: command not found&quot; - Super User</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yezhangyinge.github.io/tags/misc/">misc</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://yezhangyinge.github.io/posts/20230929_mathjax_for_articles/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>Enable MathJax for Articles</span>
+  </a>
+</nav>
+
+  </footer><script src="https://utteranc.es/client.js"
+        repo="yezhangyinge/yezhangyinge.github.io"
+        issue-term="pathname"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="https://yezhangyinge.github.io">叶藏吟歌</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+});
+</script>
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>
