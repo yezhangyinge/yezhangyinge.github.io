@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>enhancement on 叶藏吟歌</title>
+    <link>https://yezhangyinge.github.io/tags/enhancement/</link>
+    <description>Recent content in enhancement on 叶藏吟歌</description>
+    <image>
+      <url>https://yezhangyinge.github.io/papermod-cover.png</url>
+      <link>https://yezhangyinge.github.io/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 10 Mar 2024 23:34:19 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/tags/enhancement/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NCMMSC 2023 基于差和比和质心修正的风噪抑制算法</title>
+      <link>https://yezhangyinge.github.io/posts/20240310_wind_noise/</link>
+      <pubDate>Sun, 10 Mar 2024 23:34:19 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/20240310_wind_noise/</guid>
+      <description>户外场景下的语音通话质量受风噪的影响巨大，并且风噪具有短时波动剧烈的特性，对其进行有效抑制一直是相关风噪抑制技术的难点。本文提出一种两步骤的风噪抑制算法，充分利用不同通道风噪信号之间的不相关性和频谱分布特性来抑制风噪。第一步利用双通道信号间的差和功率比（差和比）来判断风噪是否存在，并利用双麦的空间相关性和相似性进行风噪初步抑制；第二步利用频谱质心法（质心法）和差和比估计残余风噪，再通过维纳滤波进行二级降噪。实验结果表明，在不同风速下本文提出的算法相比基线算法具有更强的风噪抑制能力，并且风噪越强效果提升越明显。</description>
+    </item>
+    
+  </channel>
+</rss>

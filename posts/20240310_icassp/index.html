@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT | 叶藏吟歌</title>
+<meta name="keywords" content="AEC" />
+<meta name="description" content="Deep learning has become a popular approach for improving acoustic echo cancellation (AEC) in communication systems. However, existing systems mostly rely on traditional delay estimation methods, which often result in performance degradation due to inaccurate delay estimation. Furthermore, most deep learning-based methods use single-stage networks, the limited learning capability of which hinders the performance under harsh echo conditions. To address these challenges, this paper proposes a two-stage system with dual-path alignment. The two-stage strategy performs echo suppression on the magnitude spectrum in the first stage, followed by phase correction in the second one. In addition, the first stage processes two parallel features, the magnitude spectrum and its exponential compressed version, with which dual-path alignment is conducted to improve delay estimation. Experiment results demonstrate the effectiveness of the proposed system for echo suppression in challenging scenarios involving long delay, double-talk and nonlinear distortion.">
+<meta name="author" content="yezhangyinge">
+<link rel="canonical" href="https://yezhangyinge.github.io/posts/20240310_icassp/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.fa38f142c4b8b57ef306935218cd62a739b9441a67655403d99dbebefdab2630.css" integrity="sha256-&#43;jjxQsS4tX7zBpNSGM1ipzm5RBpnZVQD2Z2&#43;vv2rJjA=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yezhangyinge.github.io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yezhangyinge.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yezhangyinge.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yezhangyinge.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yezhangyinge.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.119.0">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT" />
+<meta property="og:description" content="Deep learning has become a popular approach for improving acoustic echo cancellation (AEC) in communication systems. However, existing systems mostly rely on traditional delay estimation methods, which often result in performance degradation due to inaccurate delay estimation. Furthermore, most deep learning-based methods use single-stage networks, the limited learning capability of which hinders the performance under harsh echo conditions. To address these challenges, this paper proposes a two-stage system with dual-path alignment. The two-stage strategy performs echo suppression on the magnitude spectrum in the first stage, followed by phase correction in the second one. In addition, the first stage processes two parallel features, the magnitude spectrum and its exponential compressed version, with which dual-path alignment is conducted to improve delay estimation. Experiment results demonstrate the effectiveness of the proposed system for echo suppression in challenging scenarios involving long delay, double-talk and nonlinear distortion." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yezhangyinge.github.io/posts/20240310_icassp/" /><meta property="og:image" content="https://yezhangyinge.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-03-10T23:33:53&#43;08:00" />
+<meta property="article:modified_time" content="2024-03-10T23:33:53&#43;08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yezhangyinge.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT"/>
+<meta name="twitter:description" content="Deep learning has become a popular approach for improving acoustic echo cancellation (AEC) in communication systems. However, existing systems mostly rely on traditional delay estimation methods, which often result in performance degradation due to inaccurate delay estimation. Furthermore, most deep learning-based methods use single-stage networks, the limited learning capability of which hinders the performance under harsh echo conditions. To address these challenges, this paper proposes a two-stage system with dual-path alignment. The two-stage strategy performs echo suppression on the magnitude spectrum in the first stage, followed by phase correction in the second one. In addition, the first stage processes two parallel features, the magnitude spectrum and its exponential compressed version, with which dual-path alignment is conducted to improve delay estimation. Experiment results demonstrate the effectiveness of the proposed system for echo suppression in challenging scenarios involving long delay, double-talk and nonlinear distortion."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://yezhangyinge.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT",
+      "item": "https://yezhangyinge.github.io/posts/20240310_icassp/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT",
+  "name": "ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT",
+  "description": "Deep learning has become a popular approach for improving acoustic echo cancellation (AEC) in communication systems. However, existing systems mostly rely on traditional delay estimation methods, which often result in performance degradation due to inaccurate delay estimation. Furthermore, most deep learning-based methods use single-stage networks, the limited learning capability of which hinders the performance under harsh echo conditions. To address these challenges, this paper proposes a two-stage system with dual-path alignment. The two-stage strategy performs echo suppression on the magnitude spectrum in the first stage, followed by phase correction in the second one. In addition, the first stage processes two parallel features, the magnitude spectrum and its exponential compressed version, with which dual-path alignment is conducted to improve delay estimation. Experiment results demonstrate the effectiveness of the proposed system for echo suppression in challenging scenarios involving long delay, double-talk and nonlinear distortion.",
+  "keywords": [
+    "AEC"
+  ],
+  "articleBody": "简要介绍 本论文已经被 ICASSP 2024 接收，主要解决的问题是声学回声消除中存在延时和非线性失真情况下消除效果不好的问题。解决的方式为：\n采用 dual-path alignment (DPA) 实现网络的隐式对齐，改善存在延时情况下的声学回声消除性能。 采用两阶段网络来实现更好去除非线性情况下的回声。第一阶段估计幅度谱掩膜，第二阶段估计相位谱来实现回声消除。 问题描述 如下图，近端麦克风信号 $y(n)$ 包含回声信号 $e(n)$ 和 语音信号 $s(n)$ :\n$$ y(n) = s(n) + e(n) $$\n其中声学回声信号由远端参考信号 $x(n)$ 经过扬声器的非线性失真函数 $g(\\cdot)$ 并和回声路径进行卷积得到 $h(n)$ .\n$$ e(n) = h(n)*g(x(n)) $$\n本文会在频域进行回声消除任务，所以会有如下表达式：\n$$ Y(t,f) = S(t,f)+ E(t,f) $$\n其中 $t,f$ 分别代表帧索引和频点索引，整个回声消除的目的就是从 $Y(t,f)$ 中去除 $E(t,f)$ 并保留 $S(t,f)$ 。\n网络结构 网络整体结构如上，包含两阶段。第一阶段会估计一个幅度谱掩膜用于增强近端麦克风信号（并且DPA用来软对齐信号），第二阶段会估计一个复数谱掩膜用于矫正相位。\n第一阶段 第一阶段网络由 CRN 构成：包含 encoder block，recurrent block 和 decoder block。 encoder 会接收四路信号的输入： $X_m(t,f),X_{cm}(t,f),Y_m(t,f), Y_{cm}(t,f)$ 分别代表远端参考信号的幅度和压缩幅度谱，近端麦克风信号的幅度和压缩幅度谱。四路输入首先各自经过两层卷积来提取特征。然后送入 DPA 模块得到对齐后的远端参考信号的特征，并拼接在一起经过额外两层卷积来进一步提取特征。encoder的输出会送到 recurrent block 进一步获取帧之间的信息，最后使用 decoder 来估计幅度谱的掩膜 $M(t,f)$ 。\n从而估计出来的幅度谱为：\n$$ \\hat S_m(t,f) = M(t,f)\\odot Y_m(t,f) $$\n第二阶段 第二阶段网络同样由 CRN 构成。encoder 的输入包含估计出来的近端信号的实部和虚部，其通过下式计算：\n$$ \\hat S_{r}(t,f) = \\hat S_m(t,f)cos(\\theta_y(t,f))\\\\ \\hat S_{i}(t,f) = \\hat S_m(t,f)sin(\\theta_y(t,f)) $$\n其中 $\\theta_y(t,f)$ 代表 $Y(t,f)$ 的相位谱。然后网络会估计出一个复数谱掩膜 $[C_r(t,f), C_i(t,f)]$ 。通过该复数谱我们可以估计出近端语音的相位：\n$$ \\hat \\theta_s(t,f) = arctan(\\frac{C_i(t,f)Y_i(t,f)}{C_r(t,f)Y_r(t,f)}) $$\n最后估计出来的干净语音由下式求得：\n$$ \\hat S(t,f) = \\hat S_m(t,f)e^{j\\hat \\theta_s(t,f)} $$\n损失函数 损失函数包含两部分：压缩幅度谱损失和压缩复数谱损失。\n$$ L_{s_1} = \\frac{1}{TF}\\sum_{t,f}|\\hat S_m^{\\alpha}(t,f) - S_m^{\\alpha}(t,f)|^2\\\\ L_{s_2} = \\frac{1}{TF}\\sum_{t,f}|\\hat S_m^{\\alpha}(t,f)e^{j\\hat \\theta_s(t,f)} - S_m^{\\alpha}(t,f)e^{j\\theta_s(t,f)}|^2 $$\n然后将这个两个损失函数进行加权得到：\n$$ L = \\gamma L_{s_1} + (1-\\gamma)L_{s_2} $$\n其中 $\\gamma$ 的取值通过验证集获得。并且参考自论文 EFFECT OF NOISE SUPPRESSION LOSSES ON SPEECH DISTORTION AND ASR PERFORMANCE，其给出的结论是 幅度谱权重高的时候更加关注语音损伤，复数谱权重高的时候更加关注降噪。\n结果 以上是实验结果的汇总。通过 table 1 可以看到提出的 TSDPANet 相比于两个 baseline 在运算量和参数量都较低的情况下能够更加有效提升双讲和单讲下的性能。通过 table 2 可以看出 TSDPANet 在不同延时和存在非线性与否的情况下都能取得良好性能。最后，通过 table 3 中的消融实验可以看出，两阶段网络性能好于一阶段，这是因为两阶段能够更好优化相位。但是在不采用对齐的时候，两阶段网络效果不如一阶段，这主要因为没有对齐影响了第一阶段的幅度谱掩膜估计从而影响了相位估计。此外，通过 SPA 和 DPA 的对比可以看出，采用 DPA 可以取得更好的性能，这可以归功于 DPA 更好的特征提取能力和对齐能力，从而提升了幅度谱的估计和相位的矫正。\n另外需要说明的是从 $AECMOS_d$ 的结果看来效果并不是很好，网络不可避免对语音造成了损伤。因为第一阶段的掩膜的损伤无法通过第二阶段来进行补偿。后续考虑对这一部分进行改进，考虑使用DCT变换来将两阶段统一为一阶段。\n音频对比 以下是传统算法在高延时 (506ms)，存在非线性失真，双讲情况的效果对比：\n从上图可以看到，效果非常差，这是因为在有延时情况下传统算法将无法正确估计回声路径，这导致了无法正确抑制回声。此外双讲和非线性也严重影响了各类算法的收敛，导致效果不好。\n以下是论文中 baseline 与提出的网络的对比：\n可以看到其他 baseline 的效果并不好，一方面是因为没有进行对齐，另一方面在于提出的两阶段网络能够更好地处理复杂情况下的回声。\n但从 TSDPANet 和近端干净信号的对比可以看出，TSDPANet还是存在一定的语音损伤的。\nMore about alignment 如何通过网络实现软对齐的：核心在于将原来的帧内自相关，改为了求取帧间自相关。\n首先由于需要进行延时的是远端参考信号，所以会在远端参考信号 $X$ 前面进行padding，而近端麦克风信号 $Y$ 则不做处理。\n如果延时最长是 $n$ 帧 ，那么按照以下方式进行 $padding$ ：\n$$ [padding,\\cdots, padding, X(1,f),X(2,f),\\cdots,X(k,f)]^T $$\n同时 $unfold$ ：\n$$ \\begin{align} Delay=0\u0026:X_{D_0} = [X(1,f),X(2,f),…,X(k-1,f),X(k,f)]^T\\\\ Delay=1\u0026:X_{D_1} = [padding,X(1,f),…,X(k-2,f),X(k-1,f)]^T\\\\ Delay=2\u0026:X_{D_2} = [padding,padding,…,X(k-3,f),X(k-2,f)]^T\\\\ …\\\\ Delay=n\u0026:X_{D_n} = [padding,padding,…,X(k-(n-1),f),X(k-n,f)]^T\\\\ \\end{align} $$\n所以有：\n$$ \\begin{align} Q \u0026= [X_{D_n},X_{D_{n-1}},…,X_{D_1},X_{D_0}]^T\\\\ K \u0026= [Y(1,f),Y(2,f),…,Y(k-1,f),Y(k,f)]\\\\ \\end{align} $$\n得到：\n$$ \\begin{align} D \u0026= softmax{QK^T}\\\\ \u0026= softmax{ \\begin{bmatrix} padding \u0026 padding \u0026 \\cdots \u0026 X(k-(n-1),f) \u0026 X(k-n,f) \\\\ \\vdots \u0026 \\ddots \u0026 \\vdots \\\\ padding \u0026 padding \u0026 \\cdots \u0026 X(k-3,f) \u0026 X(k-2, f) \\\\ padding \u0026 X(1,f) \u0026 \\cdots \u0026 X(k-2,f) \u0026 X(k-1, f) \\\\ X(1,f) \u0026 X(2,f) \u0026 \\cdots \u0026 X(k-1,f) \u0026 X(k, f) \\\\ \\end{bmatrix} \\begin{bmatrix} Y(1,f) \\\\ Y(2,f) \\\\ \\vdots \\\\ Y(k-1,f) \\\\ Y(k,f) \\\\ \\end{bmatrix} } \\end{align} $$\n最后得到 D 为延时概率：\n$$ D = [prob_{D_n}, prob_{D_{n-1}},\\cdots,prob_{D_0}]^T $$\n通过这个概率对 Q ，也就是各个延时的特征进行加权则可以得到最后经过延时的特征：\n$$ \\hat X = sum[Q\\odot D] = QD^T = \\sum_{i = 0}^{n}prob_{D_i}X_{D_i} $$\n传统做法 To be done！\n",
+  "wordCount" : "365",
+  "inLanguage": "en",
+  "datePublished": "2024-03-10T23:33:53+08:00",
+  "dateModified": "2024-03-10T23:33:53+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "yezhangyinge"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yezhangyinge.github.io/posts/20240310_icassp/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "叶藏吟歌",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yezhangyinge.github.io/android-chrome-192x192.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yezhangyinge.github.io" accesskey="h" title="叶藏吟歌 (Alt + H)">叶藏吟歌</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yezhangyinge.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://yezhangyinge.github.io">Home</a>&nbsp;»&nbsp;<a href="https://yezhangyinge.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT
+    </h1>
+    <div class="post-meta"><span title='2024-03-10 23:33:53 +0800 CST'>March 10, 2024</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;yezhangyinge
+      
+    </div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e7%ae%80%e8%a6%81%e4%bb%8b%e7%bb%8d" aria-label="简要介绍">简要介绍</a></li>
+                    <li>
+                        <a href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0" aria-label="问题描述">问题描述</a></li>
+                    <li>
+                        <a href="#%e7%bd%91%e7%bb%9c%e7%bb%93%e6%9e%84" aria-label="网络结构">网络结构</a><ul>
+                            
+                    <li>
+                        <a href="#%e7%ac%ac%e4%b8%80%e9%98%b6%e6%ae%b5" aria-label="第一阶段">第一阶段</a></li>
+                    <li>
+                        <a href="#%e7%ac%ac%e4%ba%8c%e9%98%b6%e6%ae%b5" aria-label="第二阶段">第二阶段</a></li>
+                    <li>
+                        <a href="#%e6%8d%9f%e5%a4%b1%e5%87%bd%e6%95%b0" aria-label="损失函数">损失函数</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e7%bb%93%e6%9e%9c" aria-label="结果">结果</a><ul>
+                            
+                    <li>
+                        <a href="#%e9%9f%b3%e9%a2%91%e5%af%b9%e6%af%94" aria-label="音频对比">音频对比</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#more-about-alignment" aria-label="More about alignment">More about alignment</a></li>
+                    <li>
+                        <a href="#%e4%bc%a0%e7%bb%9f%e5%81%9a%e6%b3%95" aria-label="传统做法">传统做法</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="简要介绍">简要介绍<a hidden class="anchor" aria-hidden="true" href="#简要介绍">#</a></h1>
+<p>本论文已经被 ICASSP 2024 接收，主要解决的问题是声学回声消除中存在延时和非线性失真情况下消除效果不好的问题。解决的方式为：</p>
+<ol>
+<li>采用 dual-path alignment (DPA) 实现网络的隐式对齐，改善存在延时情况下的声学回声消除性能。</li>
+<li>采用两阶段网络来实现更好去除非线性情况下的回声。第一阶段估计幅度谱掩膜，第二阶段估计相位谱来实现回声消除。</li>
+</ol>
+<p><img loading="lazy" src="/image/image-20240310133101655.png" alt="image-20240310133101655"  />
+</p>
+<h1 id="问题描述">问题描述<a hidden class="anchor" aria-hidden="true" href="#问题描述">#</a></h1>
+<p><img loading="lazy" src="/image/image-20240310132743405.png" alt="image-20240310132743405"  />
+</p>
+<p>如下图，近端麦克风信号 $y(n)$ 包含回声信号 $e(n)$ 和 语音信号 $s(n)$ :</p>
+<p>$$
+y(n) = s(n) + e(n)
+$$</p>
+<p>其中声学回声信号由远端参考信号 $x(n)$ 经过扬声器的非线性失真函数 $g(\cdot)$ 并和回声路径进行卷积得到 $h(n)$ .</p>
+<p>$$
+e(n) = h(n)*g(x(n))
+$$</p>
+<p>本文会在频域进行回声消除任务，所以会有如下表达式：</p>
+<p>$$
+Y(t,f) = S(t,f)+ E(t,f)
+$$</p>
+<p>其中 $t,f$ 分别代表帧索引和频点索引，整个回声消除的目的就是从 $Y(t,f)$ 中去除 $E(t,f)$ 并保留 $S(t,f)$ 。</p>
+<h1 id="网络结构">网络结构<a hidden class="anchor" aria-hidden="true" href="#网络结构">#</a></h1>
+<p><img loading="lazy" src="/image/image-20240310134257126.png" alt="image-20240310134257126"  />
+</p>
+<p>网络整体结构如上，包含两阶段。第一阶段会估计一个幅度谱掩膜用于增强近端麦克风信号（并且DPA用来软对齐信号），第二阶段会估计一个复数谱掩膜用于矫正相位。</p>
+<h2 id="第一阶段">第一阶段<a hidden class="anchor" aria-hidden="true" href="#第一阶段">#</a></h2>
+<p>第一阶段网络由 CRN 构成：包含 encoder block，recurrent block 和 decoder block。 encoder 会接收四路信号的输入： $X_m(t,f),X_{cm}(t,f),Y_m(t,f), Y_{cm}(t,f)$ 分别代表远端参考信号的幅度和压缩幅度谱，近端麦克风信号的幅度和压缩幅度谱。四路输入首先各自经过两层卷积来提取特征。然后送入 DPA 模块得到对齐后的远端参考信号的特征，并拼接在一起经过额外两层卷积来进一步提取特征。encoder的输出会送到 recurrent block 进一步获取帧之间的信息，最后使用 decoder 来估计幅度谱的掩膜 $M(t,f)$ 。</p>
+<p>从而估计出来的幅度谱为：</p>
+<p>$$
+\hat S_m(t,f) = M(t,f)\odot Y_m(t,f)
+$$</p>
+<h2 id="第二阶段">第二阶段<a hidden class="anchor" aria-hidden="true" href="#第二阶段">#</a></h2>
+<p>第二阶段网络同样由 CRN 构成。encoder 的输入包含估计出来的近端信号的实部和虚部，其通过下式计算：</p>
+<p>$$
+\hat S_{r}(t,f) = \hat S_m(t,f)cos(\theta_y(t,f))\\
+\hat S_{i}(t,f) = \hat S_m(t,f)sin(\theta_y(t,f))
+$$</p>
+<p>其中 $\theta_y(t,f)$ 代表 $Y(t,f)$ 的相位谱。然后网络会估计出一个复数谱掩膜 $[C_r(t,f), C_i(t,f)]$ 。通过该复数谱我们可以估计出近端语音的相位：</p>
+<p>$$
+\hat \theta_s(t,f) = arctan(\frac{C_i(t,f)Y_i(t,f)}{C_r(t,f)Y_r(t,f)})
+$$</p>
+<p>最后估计出来的干净语音由下式求得：</p>
+<p>$$
+\hat S(t,f) = \hat S_m(t,f)e^{j\hat \theta_s(t,f)}
+$$</p>
+<h2 id="损失函数">损失函数<a hidden class="anchor" aria-hidden="true" href="#损失函数">#</a></h2>
+<p>损失函数包含两部分：压缩幅度谱损失和压缩复数谱损失。</p>
+<p>$$
+L_{s_1} = \frac{1}{TF}\sum_{t,f}|\hat S_m^{\alpha}(t,f) - S_m^{\alpha}(t,f)|^2\\
+L_{s_2} = \frac{1}{TF}\sum_{t,f}|\hat S_m^{\alpha}(t,f)e^{j\hat \theta_s(t,f)} - S_m^{\alpha}(t,f)e^{j\theta_s(t,f)}|^2
+$$</p>
+<p>然后将这个两个损失函数进行加权得到：</p>
+<p>$$
+L = \gamma L_{s_1} + (1-\gamma)L_{s_2}
+$$</p>
+<p>其中 $\gamma$ 的取值通过验证集获得。并且参考自论文 EFFECT OF NOISE SUPPRESSION LOSSES ON SPEECH DISTORTION AND ASR PERFORMANCE，其给出的结论是 <strong>幅度谱权重高的时候更加关注语音损伤，复数谱权重高的时候更加关注降噪。</strong></p>
+<p><img loading="lazy" src="/image/image-20231119133918085.png" alt="image-20231119133918085"  />
+</p>
+<h1 id="结果">结果<a hidden class="anchor" aria-hidden="true" href="#结果">#</a></h1>
+<p><img loading="lazy" src="/image/image-20240310142536545.png" alt="image-20240310142536545"  />
+</p>
+<p>以上是实验结果的汇总。通过 table 1 可以看到提出的 TSDPANet 相比于两个 baseline 在运算量和参数量都较低的情况下能够更加有效提升双讲和单讲下的性能。通过 table 2 可以看出 TSDPANet 在不同延时和存在非线性与否的情况下都能取得良好性能。最后，通过 table 3 中的消融实验可以看出，两阶段网络性能好于一阶段，这是因为两阶段能够更好优化相位。但是在不采用对齐的时候，两阶段网络效果不如一阶段，这主要因为没有对齐影响了第一阶段的幅度谱掩膜估计从而影响了相位估计。此外，通过 SPA 和 DPA 的对比可以看出，采用 DPA 可以取得更好的性能，这可以归功于 DPA 更好的特征提取能力和对齐能力，从而提升了幅度谱的估计和相位的矫正。</p>
+<blockquote>
+<p>另外需要说明的是从 $AECMOS_d$ 的结果看来效果并不是很好，网络不可避免对语音造成了损伤。因为第一阶段的掩膜的损伤无法通过第二阶段来进行补偿。后续考虑对这一部分进行改进，考虑使用DCT变换来将两阶段统一为一阶段。</p>
+</blockquote>
+<h2 id="音频对比">音频对比<a hidden class="anchor" aria-hidden="true" href="#音频对比">#</a></h2>
+<p>以下是传统算法在高延时 (506ms)，存在非线性失真，双讲情况的效果对比：</p>
+<p><img loading="lazy" src="/image/image-20240310170829975.png" alt="image-20240310170829975"  />
+</p>
+<blockquote>
+<p>从上图可以看到，效果非常差，这是因为在有延时情况下传统算法将无法正确估计回声路径，这导致了无法正确抑制回声。此外双讲和非线性也严重影响了各类算法的收敛，导致效果不好。</p>
+</blockquote>
+<p>以下是论文中 baseline 与提出的网络的对比：</p>
+<p><img loading="lazy" src="/image/image-20240310171003427.png" alt="image-20240310171003427"  />
+</p>
+<blockquote>
+<p>可以看到其他 baseline 的效果并不好，一方面是因为没有进行对齐，另一方面在于提出的两阶段网络能够更好地处理复杂情况下的回声。</p>
+<p>但从 TSDPANet 和近端干净信号的对比可以看出，TSDPANet还是存在一定的语音损伤的。</p>
+</blockquote>
+<h1 id="more-about-alignment">More about alignment<a hidden class="anchor" aria-hidden="true" href="#more-about-alignment">#</a></h1>
+<p>如何通过网络实现软对齐的：核心在于将原来的帧内自相关，改为了求取帧间自相关。</p>
+<p>首先由于需要进行延时的是远端参考信号，所以会在远端参考信号 $X$ 前面进行padding，而近端麦克风信号 $Y$ 则不做处理。</p>
+<p>如果延时最长是 $n$ 帧 ，那么按照以下方式进行 $padding$ ：</p>
+<p>$$
+[padding,\cdots, padding, X(1,f),X(2,f),\cdots,X(k,f)]^T
+$$</p>
+<p>同时 $unfold$ ：</p>
+<p>$$
+\begin{align}
+Delay=0&amp;:X_{D_0} = [X(1,f),X(2,f),&hellip;,X(k-1,f),X(k,f)]^T\\
+Delay=1&amp;:X_{D_1} = [padding,X(1,f),&hellip;,X(k-2,f),X(k-1,f)]^T\\
+Delay=2&amp;:X_{D_2} = [padding,padding,&hellip;,X(k-3,f),X(k-2,f)]^T\\
+&hellip;\\
+Delay=n&amp;:X_{D_n} = [padding,padding,&hellip;,X(k-(n-1),f),X(k-n,f)]^T\\
+\end{align}
+$$</p>
+<p>所以有：</p>
+<p>$$
+\begin{align}
+Q &amp;= [X_{D_n},X_{D_{n-1}},&hellip;,X_{D_1},X_{D_0}]^T\\
+K &amp;= [Y(1,f),Y(2,f),&hellip;,Y(k-1,f),Y(k,f)]\\
+\end{align}
+$$</p>
+<p>得到：</p>
+<p>$$
+\begin{align}
+D &amp;= softmax{QK^T}\\
+&amp;= softmax{
+\begin{bmatrix}
+padding &amp; padding &amp; \cdots &amp; X(k-(n-1),f) &amp; X(k-n,f) \\
+\vdots &amp; \ddots &amp; \vdots \\
+padding &amp; padding &amp; \cdots &amp; X(k-3,f) &amp; X(k-2, f) \\
+padding &amp; X(1,f) &amp; \cdots &amp; X(k-2,f) &amp; X(k-1, f) \\
+X(1,f) &amp; X(2,f) &amp; \cdots &amp; X(k-1,f) &amp; X(k, f) \\
+\end{bmatrix}
+\begin{bmatrix}
+Y(1,f) \\
+Y(2,f) \\
+\vdots \\
+Y(k-1,f) \\
+Y(k,f) \\
+\end{bmatrix}
+}
+\end{align}
+$$</p>
+<p>最后得到 D 为延时概率：</p>
+<p>$$
+D = [prob_{D_n}, prob_{D_{n-1}},\cdots,prob_{D_0}]^T
+$$</p>
+<p>通过这个概率对 Q ，也就是各个延时的特征进行加权则可以得到最后经过延时的特征：</p>
+<p>$$
+\hat X = sum[Q\odot D] = QD^T = \sum_{i = 0}^{n}prob_{D_i}X_{D_i}
+$$</p>
+<h1 id="传统做法">传统做法<a hidden class="anchor" aria-hidden="true" href="#传统做法">#</a></h1>
+<p>To be done！</p>
+<img src="/image/image-20240310171341685.png" alt="image-20240310171341685" style="zoom:50%;" />
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yezhangyinge.github.io/tags/aec/">AEC</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yezhangyinge.github.io/posts/20240310_wind_noise/">
+    <span class="title">« Prev Page</span>
+    <br>
+    <span>NCMMSC 2023 基于差和比和质心修正的风噪抑制算法</span>
+  </a>
+  <a class="next" href="https://yezhangyinge.github.io/posts/20240212_server_management_guide/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>Linux 服务器管理指南</span>
+  </a>
+</nav>
+
+  </footer><script src="https://utteranc.es/client.js"
+        repo="yezhangyinge/yezhangyinge.github.io"
+        issue-term="pathname"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="https://yezhangyinge.github.io">叶藏吟歌</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+});
+</script>
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>AEC on 叶藏吟歌</title>
+    <link>https://yezhangyinge.github.io/tags/aec/</link>
+    <description>Recent content in AEC on 叶藏吟歌</description>
+    <image>
+      <url>https://yezhangyinge.github.io/papermod-cover.png</url>
+      <link>https://yezhangyinge.github.io/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 10 Mar 2024 23:33:53 +0800</lastBuildDate><atom:link href="https://yezhangyinge.github.io/tags/aec/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT</title>
+      <link>https://yezhangyinge.github.io/posts/20240310_icassp/</link>
+      <pubDate>Sun, 10 Mar 2024 23:33:53 +0800</pubDate>
+      
+      <guid>https://yezhangyinge.github.io/posts/20240310_icassp/</guid>
+      <description>Deep learning has become a popular approach for improving acoustic echo cancellation (AEC) in communication systems. However, existing systems mostly rely on traditional delay estimation methods, which often result in performance degradation due to inaccurate delay estimation. Furthermore, most deep learning-based methods use single-stage networks, the limited learning capability of which hinders the performance under harsh echo conditions. To address these challenges, this paper proposes a two-stage system with dual-path alignment. The two-stage strategy performs echo suppression on the magnitude spectrum in the first stage, followed by phase correction in the second one. In addition, the first stage processes two parallel features, the magnitude spectrum and its exponential compressed version, with which dual-path alignment is conducted to improve delay estimation. Experiment results demonstrate the effectiveness of the proposed system for echo suppression in challenging scenarios involving long delay, double-talk and nonlinear distortion.</description>
+    </item>
+    
+  </channel>
+</rss>

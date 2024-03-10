@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>NCMMSC 2023 基于差和比和质心修正的风噪抑制算法 | 叶藏吟歌</title>
+<meta name="keywords" content="wind_noise, enhancement" />
+<meta name="description" content="户外场景下的语音通话质量受风噪的影响巨大，并且风噪具有短时波动剧烈的特性，对其进行有效抑制一直是相关风噪抑制技术的难点。本文提出一种两步骤的风噪抑制算法，充分利用不同通道风噪信号之间的不相关性和频谱分布特性来抑制风噪。第一步利用双通道信号间的差和功率比（差和比）来判断风噪是否存在，并利用双麦的空间相关性和相似性进行风噪初步抑制；第二步利用频谱质心法（质心法）和差和比估计残余风噪，再通过维纳滤波进行二级降噪。实验结果表明，在不同风速下本文提出的算法相比基线算法具有更强的风噪抑制能力，并且风噪越强效果提升越明显。">
+<meta name="author" content="Yezhangyinge">
+<link rel="canonical" href="https://yezhangyinge.github.io/posts/20240310_wind_noise/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.fa38f142c4b8b57ef306935218cd62a739b9441a67655403d99dbebefdab2630.css" integrity="sha256-&#43;jjxQsS4tX7zBpNSGM1ipzm5RBpnZVQD2Z2&#43;vv2rJjA=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yezhangyinge.github.io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yezhangyinge.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yezhangyinge.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yezhangyinge.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yezhangyinge.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.119.0">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="NCMMSC 2023 基于差和比和质心修正的风噪抑制算法" />
+<meta property="og:description" content="户外场景下的语音通话质量受风噪的影响巨大，并且风噪具有短时波动剧烈的特性，对其进行有效抑制一直是相关风噪抑制技术的难点。本文提出一种两步骤的风噪抑制算法，充分利用不同通道风噪信号之间的不相关性和频谱分布特性来抑制风噪。第一步利用双通道信号间的差和功率比（差和比）来判断风噪是否存在，并利用双麦的空间相关性和相似性进行风噪初步抑制；第二步利用频谱质心法（质心法）和差和比估计残余风噪，再通过维纳滤波进行二级降噪。实验结果表明，在不同风速下本文提出的算法相比基线算法具有更强的风噪抑制能力，并且风噪越强效果提升越明显。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yezhangyinge.github.io/posts/20240310_wind_noise/" /><meta property="og:image" content="https://yezhangyinge.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-03-10T23:34:19&#43;08:00" />
+<meta property="article:modified_time" content="2024-03-10T23:34:19&#43;08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yezhangyinge.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="NCMMSC 2023 基于差和比和质心修正的风噪抑制算法"/>
+<meta name="twitter:description" content="户外场景下的语音通话质量受风噪的影响巨大，并且风噪具有短时波动剧烈的特性，对其进行有效抑制一直是相关风噪抑制技术的难点。本文提出一种两步骤的风噪抑制算法，充分利用不同通道风噪信号之间的不相关性和频谱分布特性来抑制风噪。第一步利用双通道信号间的差和功率比（差和比）来判断风噪是否存在，并利用双麦的空间相关性和相似性进行风噪初步抑制；第二步利用频谱质心法（质心法）和差和比估计残余风噪，再通过维纳滤波进行二级降噪。实验结果表明，在不同风速下本文提出的算法相比基线算法具有更强的风噪抑制能力，并且风噪越强效果提升越明显。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://yezhangyinge.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "NCMMSC 2023 基于差和比和质心修正的风噪抑制算法",
+      "item": "https://yezhangyinge.github.io/posts/20240310_wind_noise/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "NCMMSC 2023 基于差和比和质心修正的风噪抑制算法",
+  "name": "NCMMSC 2023 基于差和比和质心修正的风噪抑制算法",
+  "description": "户外场景下的语音通话质量受风噪的影响巨大，并且风噪具有短时波动剧烈的特性，对其进行有效抑制一直是相关风噪抑制技术的难点。本文提出一种两步骤的风噪抑制算法，充分利用不同通道风噪信号之间的不相关性和频谱分布特性来抑制风噪。第一步利用双通道信号间的差和功率比（差和比）来判断风噪是否存在，并利用双麦的空间相关性和相似性进行风噪初步抑制；第二步利用频谱质心法（质心法）和差和比估计残余风噪，再通过维纳滤波进行二级降噪。实验结果表明，在不同风速下本文提出的算法相比基线算法具有更强的风噪抑制能力，并且风噪越强效果提升越明显。",
+  "keywords": [
+    "wind_noise", "enhancement"
+  ],
+  "articleBody": "风噪特性 知己知彼，百战不殆。清楚了解风噪的特性才能够对症下药。\n高度非平稳性：因为风冲击传感器的产生的信号是快速变化且不稳定的 能量集中于中低频：通过频谱特征可以观察到 不同麦克风信号的风噪高度不相关：因为传感器之间的湍流是完全不相关的 风噪和语音是不相关的 问题描述 假设第一个麦克风接收到的信号为 $y_1(n)$ ，那么其包含语音 $x(n)$ 和风噪信号 $w_1(n)$ ：\n$$ y_1(n) = x(n) + w_1(n) $$\n第二个麦克风接收到的信号为 $y_2(n)$ ，那么其包含语音 $x(n)$ 和风噪信号 $w_2(n)$ ：\n$$ y_2(n) = x(n) + w_1(n) $$\n其中默认对麦克风信号进行了对齐以保证 $x(n)$ 在麦克风信号里是一致的。\n然后将两路麦克风信号通过短时傅里叶变换得到：\n$$ Y_1(t,f) = X(t,f) + W_1(t,f)\\\\ Y_2(t,f) = X(t,f) + W_2(t,f) $$\n风噪抑制的目标就是从两路麦克风信号 $Y_1(t,f),Y_2(t,f)$ 中恢复出 $X(t,f)$ 。\n方法 整体方法如下图所示：\n分为两阶段对风噪进行消除：第一阶段通过差和比来判断是否存在风噪，如果存在风噪则采用双麦的空间相关性和相似性的公式进行初步风噪抑制，不存在则直接输出。如果第一阶段存在风噪，那么第二阶段会再次采用质心法判断是纯风噪信号还是带残留风噪的信号，如果是残留风噪信号则进行残留风噪估计并进行维纳滤波。如果是纯风噪信号则使用一个极小值对其进行修正。\n以下是细节介绍：\n第一阶段 通过两路麦克风信号可以得到差信号 $D(t,f)$ 和和信号 $S(t,f)$ 如下：\n$$ \\begin{align} D(t,f) \u0026= Y_1(t,f) - Y_2(t,f) = W_1(t,f) - W_2(t,f)\\\\ S(t,f) \u0026= Y_1(t,f) + Y_2(t,f) = 2X(t,f)+W_1(t,f)+W_2(t,f) \\end{align} $$\n计算对应的功率谱：\n$$ \\begin{align} \\Phi_{D}(t,f) \u0026= E[|D(t,f)|^2] = \\Phi_{W_1}(t,f) + \\Phi_{W_2}(t,f)\\\\ \\Phi_{S}(t,f) \u0026= E[|S(t,f)|^2] = 4\\Phi_X(t,f) + \\Phi_{W_1}(t,f) + \\Phi_{W_2}(t,f) \\end{align} $$\n对其进行平滑操作：\n$$ \\Phi_D(t,f) = \\alpha_d \\Phi_D(t-1,f) + (1-\\alpha_d)|D(t,f)|^2\\\\ \\Phi_S(t,f) = \\alpha_s \\Phi_S(t-1,f) + (1-\\alpha_s)|S(t,f)|^2 $$\n由此可以求得差和比 $PR(t,f)$：\n$$ PR(t,f) = \\frac{\\Phi_D(t,f)}{\\Phi_S(t,f)} = \\frac{\\Phi_{W_1}(t,f) + \\Phi_{W_2}(t,f)}{4\\Phi_X(t,f) + \\Phi_{W_1}(t,f) + \\Phi_{W_2}(t,f)} $$\n当风噪占主导时候差和比为1，当语音占主导的时候差和比为0：\n$$ \\begin{align} lim_{\\Phi_{D}\\rightarrow \\infty}PR(t,f) = 1\\\\ lim_{\\Phi_{S}\\rightarrow \\infty}PR(t,f) = 0\\\\ \\end{align} $$\n为了结合风噪特性，在计算差和比的时候只取中低频进行计算，并求取平均：\n$$ \\overline{PR}(t) = \\frac{1}{k_2-k_1+1}\\sum_{k=k_1}^{k_2}w(k)PR(t,k) $$\n那么就可以通过 设置差和比阈值 $PR_0$ 来判断当前帧为语音还是带风噪：\n$$ IsWind(t) = \\begin{cases} \\ 1, \u0026 \\overline{PR(t)}\\ge PR_0\\\\ \\ 0, \u0026 \\overline{PR(t)} \u003c PR_0 \\end{cases} $$\n如果是风噪则通过下式进行抑制，该公式考虑了双麦的空间相关性和相似性：\n$$ X_{s1}(t,f) = Y_1(t,f) + \\frac{1+j\\lambda}{1+\\lambda^2}(Y_2(t,f)-Y_1(t,f)) $$\n其中 $\\lambda = \\frac{|Y_2(t,f)|}{Y_1(t,f)}$ 。\n如果不是风噪则直接输出，不做处理。\n第二阶段 对于经过第一阶段风噪抑制的信号可能还会存在风噪残留，所以需要进行进一步的处理。\n因此在第二阶段会采用质心法求解第一阶段得到的信号的质心，进行风噪的检测 ：\n$$ SSC(t) = \\frac{sr}{N}\\frac{\\sum_{k=1}^{k_3}k\\Phi_{s1}(t,f)}{\\sum_{k=1}^{k_3}\\Phi_{s1}(t,f)} $$\n其中 $sr$ 为信号采样率， $N$ 为信号的进行傅里叶变换的点数，$\\Phi_{s1}(t,f)$ 是第一阶段输出的信号的平滑功率谱，通过下式计算：\n$$ \\Phi_{s1}(t,f) = \\alpha_{s1}\\Phi_{s1}(t-1,f) + (1-\\alpha_{s1}) |X_{s1}(t,f)|^2 $$\n那么就可以通过设置质心的阈值 $SSC_0$ 来判断当前帧是纯风噪还是带风噪信号 ：\n$$ IsNoisySpeech(t) = \\begin{cases} \\ 1, \u0026 \\overline{SSC(t)}\\ge SSC_0\\\\ \\ 0, \u0026 \\overline{SSC(t)} \u003c SSC_0 \\end{cases} $$\n如果是纯风噪则直接进行最小值修正 ：\n$$ X_{s2}(t,f) = \\gamma X_{s1}(t,f) $$\n如果是带噪语音则进行维纳滤波 ，首先通过下式求解残留风噪的功率：\n$$ \\Phi_{W}(t,f) = PR(t,f) X_{s1}(t,f) $$\n然后求得先验信噪比：\n$$ \\xi(t,f) = \\alpha_{\\xi}\\xi(t-1,f) + (1-\\alpha_{\\xi})MAX[\\frac{X_{s1}(t,f)-\\Phi_W(t,f)}{\\Phi_W(t,f)},0] $$\n从而求得频率域维纳滤波的滤波器为：\n$$ H(t,f) = \\frac{\\xi(t,f)}{\\xi(t,f)+1} $$\n得到二阶段输出为：\n$$ X_{s2}(t,f) =H(t,f)X_{s1}(t,f) $$\n参数选择 超参数一共有如下：\n$\\alpha_d$ ：差信号功率谱的平滑系数，选择0.7 $\\alpha_s$ ：和信号功率谱的平滑系数，选择0.7 $\\alpha_{s1}$ ：第一阶段输出信号功率谱的平滑系数，选择0.8 $\\alpha_{\\xi}$ ：先验信噪比的平滑系数，选择0.5 $PR_0$ ：差和比阈值，取值0.15 $SSC_0$ ：质心阈值，取值175 $k_1$ ：差和比求和下限，取值1，关注0Hz以上的信号差和比 $k_2$ ：差和比求和上限，取值91，关注3000Hz以下的信号差和比 （3000·/8000*241+1） $k_3$ ：质心法求和上限，取值31，关注1000Hz以下的质心（1000/8000*241+1） $\\gamma$ ：用于修正的最小值，取值0.001，用于完全抑制纯风噪信号 $N$ ：傅里叶点数， 取值480 $sr$ ：采样率，取值16000 下面针对差和比阈值和质心的阈值进行介绍。\n差和比阈值 以下是干净语音，纯风噪，带噪语音的差和比对比。可以看到风噪的差和比基本都大于0.2，而带风噪则基本大于0.15，而语音的差和比则非常小。因此选取0.15作为阈值判断。\n此外一个显然的特性是，随着风速的增强（风噪的增强），带风噪的信号差和比逐渐趋近于1，符合前述分析。\n如果选取阈值小于0.15，会使得将更多语音认为是带噪语音，如果将阈值设置更大，则会漏检一部分的风噪。所以在设置的时候要特别关注。\n质心阈值 在 2-3m/s 风速下，风噪的质心会比带噪语音质心小。随着风速的增加，风噪质心增大，当风速大于 3.5m/s 时，风噪质心基本与带噪语音信号相当。故可以通过质心判别信号是风噪还是带噪语音信号。着重优化高风速下的算法性能。这里选取175，则是参考高风速下的质心分布。\n如果提升SSC阈值，会使得纯风噪无法被检测，如果降低这个阈值将会有更多风噪信号被认为带噪信号。\n效果 可以看到一阶段针对风速较低的风噪去除较好，但仍旧有残留，且高风噪段消除效果不明显。经过第二阶段之后则将风噪很好地进行了去除。\n从下表也可以看出，提出的方法在风速越高的情况下效果远优于其他算法。缺点也很明显，在低风速情况下效果还有待提升。\n啸叫\n",
+  "wordCount" : "314",
+  "inLanguage": "en",
+  "datePublished": "2024-03-10T23:34:19+08:00",
+  "dateModified": "2024-03-10T23:34:19+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Yezhangyinge"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yezhangyinge.github.io/posts/20240310_wind_noise/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "叶藏吟歌",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yezhangyinge.github.io/android-chrome-192x192.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yezhangyinge.github.io" accesskey="h" title="叶藏吟歌 (Alt + H)">叶藏吟歌</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yezhangyinge.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yezhangyinge.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://yezhangyinge.github.io">Home</a>&nbsp;»&nbsp;<a href="https://yezhangyinge.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      NCMMSC 2023 基于差和比和质心修正的风噪抑制算法
+    </h1>
+    <div class="post-meta"><span title='2024-03-10 23:34:19 +0800 CST'>March 10, 2024</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;Yezhangyinge
+      
+    </div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e9%a3%8e%e5%99%aa%e7%89%b9%e6%80%a7" aria-label="风噪特性">风噪特性</a></li>
+                    <li>
+                        <a href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0" aria-label="问题描述">问题描述</a></li>
+                    <li>
+                        <a href="#%e6%96%b9%e6%b3%95" aria-label="方法">方法</a><ul>
+                            
+                    <li>
+                        <a href="#%e7%ac%ac%e4%b8%80%e9%98%b6%e6%ae%b5" aria-label="第一阶段">第一阶段</a></li>
+                    <li>
+                        <a href="#%e7%ac%ac%e4%ba%8c%e9%98%b6%e6%ae%b5" aria-label="第二阶段">第二阶段</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e5%8f%82%e6%95%b0%e9%80%89%e6%8b%a9" aria-label="参数选择">参数选择</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%b7%ae%e5%92%8c%e6%af%94%e9%98%88%e5%80%bc" aria-label="差和比阈值">差和比阈值</a></li>
+                    <li>
+                        <a href="#%e8%b4%a8%e5%bf%83%e9%98%88%e5%80%bc" aria-label="质心阈值">质心阈值</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%95%88%e6%9e%9c" aria-label="效果">效果</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="风噪特性">风噪特性<a hidden class="anchor" aria-hidden="true" href="#风噪特性">#</a></h1>
+<p>知己知彼，百战不殆。清楚了解风噪的特性才能够对症下药。</p>
+<ol>
+<li>高度非平稳性：因为风冲击传感器的产生的信号是快速变化且不稳定的</li>
+<li>能量集中于中低频：通过频谱特征可以观察到</li>
+<li>不同麦克风信号的风噪高度不相关：因为传感器之间的湍流是完全不相关的</li>
+<li>风噪和语音是不相关的</li>
+</ol>
+<h1 id="问题描述">问题描述<a hidden class="anchor" aria-hidden="true" href="#问题描述">#</a></h1>
+<p>假设第一个麦克风接收到的信号为 $y_1(n)$ ，那么其包含语音 $x(n)$ 和风噪信号 $w_1(n)$ ：</p>
+<p>$$
+y_1(n) = x(n) + w_1(n)
+$$</p>
+<p>第二个麦克风接收到的信号为  $y_2(n)$ ，那么其包含语音 $x(n)$ 和风噪信号 $w_2(n)$ ：</p>
+<p>$$
+y_2(n) = x(n) + w_1(n)
+$$</p>
+<p>其中默认对麦克风信号进行了对齐以保证 $x(n)$ 在麦克风信号里是一致的。</p>
+<p>然后将两路麦克风信号通过短时傅里叶变换得到：</p>
+<p>$$
+Y_1(t,f) = X(t,f) + W_1(t,f)\\
+Y_2(t,f) = X(t,f) + W_2(t,f)
+$$</p>
+<p>风噪抑制的目标就是从两路麦克风信号 $Y_1(t,f),Y_2(t,f)$ 中恢复出 $X(t,f)$ 。</p>
+<h1 id="方法">方法<a hidden class="anchor" aria-hidden="true" href="#方法">#</a></h1>
+<p>整体方法如下图所示：</p>
+<p><img loading="lazy" src="/image/wind_noise-1710066733412-2.png" alt="img"  />
+</p>
+<p>分为两阶段对风噪进行消除：第一阶段通过差和比来判断是否存在风噪，如果存在风噪则采用双麦的空间相关性和相似性的公式进行初步风噪抑制，不存在则直接输出。如果第一阶段存在风噪，那么第二阶段会再次采用质心法判断是纯风噪信号还是带残留风噪的信号，如果是残留风噪信号则进行残留风噪估计并进行维纳滤波。如果是纯风噪信号则使用一个极小值对其进行修正。</p>
+<p>以下是细节介绍：</p>
+<h2 id="第一阶段">第一阶段<a hidden class="anchor" aria-hidden="true" href="#第一阶段">#</a></h2>
+<p>通过两路麦克风信号可以得到差信号 $D(t,f)$ 和和信号 $S(t,f)$ 如下：</p>
+<p>$$
+\begin{align}
+D(t,f) &amp;= Y_1(t,f) - Y_2(t,f) = W_1(t,f) - W_2(t,f)\\
+S(t,f) &amp;= Y_1(t,f) + Y_2(t,f) = 2X(t,f)+W_1(t,f)+W_2(t,f)
+\end{align}
+$$</p>
+<p>计算对应的功率谱：</p>
+<p>$$
+\begin{align}
+\Phi_{D}(t,f) &amp;= E[|D(t,f)|^2] = \Phi_{W_1}(t,f) + \Phi_{W_2}(t,f)\\
+\Phi_{S}(t,f) &amp;= E[|S(t,f)|^2] = 4\Phi_X(t,f) + \Phi_{W_1}(t,f) + \Phi_{W_2}(t,f)
+\end{align}
+$$</p>
+<p>对其进行平滑操作：</p>
+<p>$$
+\Phi_D(t,f) = \alpha_d \Phi_D(t-1,f) + (1-\alpha_d)|D(t,f)|^2\\
+\Phi_S(t,f) = \alpha_s \Phi_S(t-1,f) + (1-\alpha_s)|S(t,f)|^2
+$$</p>
+<p>由此可以求得差和比 $PR(t,f)$：</p>
+<p>$$
+PR(t,f) = \frac{\Phi_D(t,f)}{\Phi_S(t,f)} = \frac{\Phi_{W_1}(t,f) + \Phi_{W_2}(t,f)}{4\Phi_X(t,f) + \Phi_{W_1}(t,f) + \Phi_{W_2}(t,f)}
+$$</p>
+<p>当风噪占主导时候差和比为1，当语音占主导的时候差和比为0：</p>
+<p>$$
+\begin{align}
+lim_{\Phi_{D}\rightarrow \infty}PR(t,f) = 1\\
+lim_{\Phi_{S}\rightarrow \infty}PR(t,f) = 0\\
+\end{align}
+$$</p>
+<p>为了结合风噪特性，在计算差和比的时候只取中低频进行计算，并求取平均：</p>
+<p>$$
+\overline{PR}(t) = \frac{1}{k_2-k_1+1}\sum_{k=k_1}^{k_2}w(k)PR(t,k)
+$$</p>
+<p>那么就可以通过 <strong>设置差和比阈值 $PR_0$ 来判断当前帧为语音还是带风噪</strong>：</p>
+<p>$$
+IsWind(t) =
+\begin{cases}
+\ 1, &amp; \overline{PR(t)}\ge PR_0\\
+\ 0, &amp; \overline{PR(t)} &lt; PR_0
+\end{cases}
+$$</p>
+<p><strong>如果是风噪则通过下式进行抑制</strong>，该公式考虑了双麦的空间相关性和相似性：</p>
+<p>$$
+X_{s1}(t,f) = Y_1(t,f) + \frac{1+j\lambda}{1+\lambda^2}(Y_2(t,f)-Y_1(t,f))
+$$</p>
+<p>其中 $\lambda = \frac{|Y_2(t,f)|}{Y_1(t,f)}$ 。</p>
+<p><strong>如果不是风噪则直接输出，不做处理</strong>。</p>
+<h2 id="第二阶段">第二阶段<a hidden class="anchor" aria-hidden="true" href="#第二阶段">#</a></h2>
+<p>对于经过第一阶段风噪抑制的信号可能还会存在风噪残留，所以需要进行进一步的处理。</p>
+<p>因此在第二阶段会<strong>采用质心法求解第一阶段得到的信号的质心，进行风噪的检测</strong> ：</p>
+<p>$$
+SSC(t) = \frac{sr}{N}\frac{\sum_{k=1}^{k_3}k\Phi_{s1}(t,f)}{\sum_{k=1}^{k_3}\Phi_{s1}(t,f)}
+$$</p>
+<p>其中 $sr$ 为信号采样率， $N$ 为信号的进行傅里叶变换的点数，$\Phi_{s1}(t,f)$ 是第一阶段输出的信号的平滑功率谱，通过下式计算：</p>
+<p>$$
+\Phi_{s1}(t,f) = \alpha_{s1}\Phi_{s1}(t-1,f) + (1-\alpha_{s1}) |X_{s1}(t,f)|^2
+$$</p>
+<p>那么就可以通过<strong>设置质心的阈值 $SSC_0$ 来判断当前帧是纯风噪还是带风噪信号</strong> ：</p>
+<p>$$
+IsNoisySpeech(t) =
+\begin{cases}
+\ 1, &amp; \overline{SSC(t)}\ge SSC_0\\
+\ 0, &amp; \overline{SSC(t)} &lt; SSC_0
+\end{cases}
+$$</p>
+<p><strong>如果是纯风噪则直接进行最小值修正</strong> ：</p>
+<p>$$
+X_{s2}(t,f) = \gamma X_{s1}(t,f)
+$$</p>
+<p><strong>如果是带噪语音则进行维纳滤波</strong> ，首先通过下式求解残留风噪的功率：</p>
+<p>$$
+\Phi_{W}(t,f) = PR(t,f) X_{s1}(t,f)
+$$</p>
+<p>然后求得先验信噪比：</p>
+<p>$$
+\xi(t,f) = \alpha_{\xi}\xi(t-1,f) + (1-\alpha_{\xi})MAX[\frac{X_{s1}(t,f)-\Phi_W(t,f)}{\Phi_W(t,f)},0]
+$$</p>
+<p>从而求得频率域维纳滤波的滤波器为：</p>
+<p>$$
+H(t,f) = \frac{\xi(t,f)}{\xi(t,f)+1}
+$$</p>
+<p>得到二阶段输出为：</p>
+<p>$$
+X_{s2}(t,f)  =H(t,f)X_{s1}(t,f)
+$$</p>
+<h1 id="参数选择">参数选择<a hidden class="anchor" aria-hidden="true" href="#参数选择">#</a></h1>
+<p>超参数一共有如下：</p>
+<ol>
+<li>$\alpha_d$ ：差信号功率谱的平滑系数，选择0.7</li>
+<li>$\alpha_s$ ：和信号功率谱的平滑系数，选择0.7</li>
+<li>$\alpha_{s1}$ ：第一阶段输出信号功率谱的平滑系数，选择0.8</li>
+<li>$\alpha_{\xi}$ ：先验信噪比的平滑系数，选择0.5</li>
+<li>$PR_0$ ：差和比阈值，取值0.15</li>
+<li>$SSC_0$ ：质心阈值，取值175</li>
+<li>$k_1$ ：差和比求和下限，取值1，关注0Hz以上的信号差和比</li>
+<li>$k_2$ ：差和比求和上限，取值91，关注3000Hz以下的信号差和比 （3000·/8000*241+1）</li>
+<li>$k_3$ ：质心法求和上限，取值31，关注1000Hz以下的质心（1000/8000*241+1）</li>
+<li>$\gamma$ ：用于修正的最小值，取值0.001，用于完全抑制纯风噪信号</li>
+<li>$N$ ：傅里叶点数， 取值480</li>
+<li>$sr$ ：采样率，取值16000</li>
+</ol>
+<p>下面针对差和比阈值和质心的阈值进行介绍。</p>
+<h2 id="差和比阈值">差和比阈值<a hidden class="anchor" aria-hidden="true" href="#差和比阈值">#</a></h2>
+<p>以下是干净语音，纯风噪，带噪语音的差和比对比。可以看到风噪的差和比基本都大于0.2，而带风噪则基本大于0.15，而语音的差和比则非常小。因此选取0.15作为阈值判断。</p>
+<p>此外一个显然的特性是，随着风速的增强（风噪的增强），带风噪的信号差和比逐渐趋近于1，符合前述分析。</p>
+<p><img loading="lazy" src="/image/image-20240310215026745.png" alt="image-20240310215026745"  />
+</p>
+<blockquote>
+<p>如果选取阈值小于0.15，会使得将更多语音认为是带噪语音，如果将阈值设置更大，则会漏检一部分的风噪。所以在设置的时候要特别关注。</p>
+</blockquote>
+<h2 id="质心阈值">质心阈值<a hidden class="anchor" aria-hidden="true" href="#质心阈值">#</a></h2>
+<p>在 2-3m/s 风速下，风噪的质心会比带噪语音质心小。随着风速的增加，风噪质心增大，当风速大于 3.5m/s 时，风噪质心基本与带噪语音信号相当。故可以通过质心判别信号是风噪还是带噪语音信号。着重优化高风速下的算法性能。这里选取175，则是参考高风速下的质心分布。</p>
+<p><img loading="lazy" src="/image/image-20240310215622592.png" alt="image-20240310215622592"  />
+</p>
+<blockquote>
+<p>如果提升SSC阈值，会使得纯风噪无法被检测，如果降低这个阈值将会有更多风噪信号被认为带噪信号。</p>
+</blockquote>
+<h1 id="效果">效果<a hidden class="anchor" aria-hidden="true" href="#效果">#</a></h1>
+<p>可以看到一阶段针对风速较低的风噪去除较好，但仍旧有残留，且高风噪段消除效果不明显。经过第二阶段之后则将风噪很好地进行了去除。</p>
+<p><img loading="lazy" src="/image/image-20240310221429244.png" alt="image-20240310221429244"  />
+</p>
+<p>从下表也可以看出，提出的方法在风速越高的情况下效果远优于其他算法。缺点也很明显，在低风速情况下效果还有待提升。</p>
+<p><img loading="lazy" src="/image/image-20240310221920041.png" alt="image-20240310221920041"  />
+</p>
+<p><audio src="/image/noise_s2_snrtype_3.wav">啸叫</audio></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yezhangyinge.github.io/tags/wind_noise/">wind_noise</a></li>
+      <li><a href="https://yezhangyinge.github.io/tags/enhancement/">enhancement</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://yezhangyinge.github.io/posts/20240310_icassp/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>ICASSP2024 TWO-STAGE ACOUSTIC ECHO CANCELLATION NETWORK WITH DUAL-PATH ALIGNMENT</span>
+  </a>
+</nav>
+
+  </footer><script src="https://utteranc.es/client.js"
+        repo="yezhangyinge/yezhangyinge.github.io"
+        issue-term="pathname"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="https://yezhangyinge.github.io">叶藏吟歌</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+});
+</script>
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>
